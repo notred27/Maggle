@@ -18,7 +18,7 @@ Steps to get started with Spotify's Web API can be found [here](https://develope
 
 Additionally, the file Maggle_build.py can be compiled into a onefile executable using Pyinstaller. This can be achieved by the command found in the file _"pyinstaller"_.
 
-##Screenshots
+## Screenshots
 
 ![](assets/mainscreen.PNG)
 ![](assets/badguesses.PNG)
