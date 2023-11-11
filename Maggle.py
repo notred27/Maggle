@@ -11,7 +11,7 @@ import json
 from dotenv import load_dotenv
 import os
 
-
+#============================================ Data Management and Spotify API Functions ============================================#
 # Function to get a random song from the user's library
 def getSong(id, secret):
     creds = SpotifyClientCredentials(client_id= id, client_secret=secret)
@@ -23,8 +23,6 @@ def getSong(id, secret):
     playlist_index = random.randint(0, playlists['total'] - 1)
 
     playlist = playlists['items'][playlist_index]
-
-    #playlist_name = playlist['name']
     
     for val in spotify.playlist(playlist['uri'])['tracks']['items']:
         if val['track']['preview_url'] != None and val['track'] != None:
@@ -82,9 +80,6 @@ def getSongTitles(id, secret):
 
 #============================================ Game Logic Functions ============================================#
 
-
-
-
 # Increase the ammount of time the song plays and update the text
 def add_time(inc = ""):
     global num_seconds, info, game_over, current_streak
@@ -108,20 +103,15 @@ def add_time(inc = ""):
             game_over = True
             reveal_state()
 
-    
-
-
 
 # Function that checks if a guess is correct or not
 def check_answer(val):
     global game_over, num_seconds, current_streak, best_streak
 
-    
     test = (str(song[0]) + " - " + str(song[1]))
 
     guessLabels[num_seconds]['text'] = val
 
-    
     if test == val:
         reveal_state()
         guessLabels[num_seconds]['fg'] = 'green'
@@ -142,8 +132,6 @@ def check_answer(val):
         guessLabels[num_seconds]['fg'] = 'red'
         guess_canvas.create_rectangle(30 * num_seconds,0,30 * num_seconds + 24,8, fill = "red")
         add_time(inc = "Incorrect!\n")
-
-
 
 
 def reset_game():
@@ -179,7 +167,6 @@ def reset_game():
         label['text'] = ""
  
 #============================================ Tkinter Functions ============================================#
-
 # Play a portion of the song 
 x = []  # Using this list is a janky way to cancel all prev timers, fix when you can                             TODO
 def play_music():
@@ -202,12 +189,12 @@ def play_music():
         stop_music()
         music_playing = False
         
-
 def stop_music():
     global music_playing
     mixer.music.stop()
     mixer.music.unload()
     music_playing = False
+
 
 # Code to find results in the drop down menu
 def manage_combobox(event):
@@ -338,7 +325,9 @@ mixer.init()
 bgColor = '#121212'
 root = Tk()
 root.protocol("WM_DELETE_WINDOW", on_closing)
-root.title('Maggle')  #Title for window
+root.title('Maggle')        # Title for window
+root.iconbitmap('M.ico')    # Set icon for window
+
 root.geometry("500x420")
 root.option_add("*Font", ("Adobe Garamond Pro Bold", 10))
 root.option_add("*Foreground", "white")
