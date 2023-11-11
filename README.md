@@ -1,3 +1,4 @@
+![](assets/banner.png)
 # Maggle 
 
 This is an application based on the popular game Heardle. Instead of random daily songs, this app uses your favorite songs that you've added to your Spotify playlists.
