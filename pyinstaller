@@ -1,0 +1,1 @@
+python pyinstaller maggle/Maggle_build.py --name Maggle --onefile --noconsole -F --add-data "maggle/assets/cover.jpg;." --add-data "maggle/assets/M.ico;." --add-data "maggle/assets/mystery.mp3;." --add-data "maggle/assets/p2.png;."
