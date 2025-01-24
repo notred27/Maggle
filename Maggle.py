@@ -11,6 +11,7 @@ import json
 from dotenv import load_dotenv
 import os
 
+from AlternativeAudioSource import AudioStreamer 
 #============================================ Data Management and Spotify API Functions ============================================#
 # Function to get a random song from the user's library
 def getSong(id, secret):
@@ -25,11 +26,11 @@ def getSong(id, secret):
     playlist = playlists['items'][playlist_index]
     
     for val in spotify.playlist(playlist['uri'])['tracks']['items']:
-        if val['track']['preview_url'] != None and val['track'] != None:
+        if val['track'] != None:
             artist = val['track']['artists'][0]['name']
             songs.append([val['track']['name'], artist , val['track']['preview_url'], val['track']['album']['images'][1]['url']])
 
-    print(spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['name'], spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['artists'][0]['name'])
+    # print(spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['name'], spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['artists'][0]['name'])
 
     song_index = random.randint(0, len(songs) - 1)
     
@@ -57,7 +58,12 @@ def getSongTitles(id, secret):
                     except: 
                         artist = "N/A"
 
-                    title_list.append(str(val['track']['name']) + " - " + artist)    
+                    try:
+                        title_list.append(str(val['track']['name']) + " - " + artist)    
+
+                    except: 
+                        pass
+
 
         if playlists['next']:
             playlists = spotify.next(playlists)
@@ -137,14 +143,16 @@ def check_answer(val):
 
 
 def reset_game():
-    global song, lst, num_seconds, game_over,current_streak, playing, cover_lbl
+    global song, lst, num_seconds, game_over,current_streak, playing, cover_lbl, audioSrc
 
     stop_music()
     playing = False
 
     song = getSong(client_ID, client_S)
     get_img(song[3])
-    get_sound(song[2])
+    # get_sound(song[2])
+
+    audioSrc.get_preview(song[0], song[1])
 
     newImg = ImageTk.PhotoImage(Image.open("assets\cover.jpg").resize((150,150)))
     cover_lbl.configure(image=newImg)
@@ -287,7 +295,7 @@ music_playing = False                   # Boolean for if music is currently play
 game_over = False                       # Boolean for if the game is over (still in guessing phase)
 
 # Get .env variables
-load_dotenv()
+load_dotenv('assets\.env')
 target_username = os.getenv('target_username')
 client_ID = os.getenv('client_id')
 client_S = os.getenv('client_secret')
@@ -308,7 +316,12 @@ if name != target_username:
 # Get the new target song and its associated info
 song = getSong(client_ID, client_S)
 get_img(song[3])
-get_sound(song[2])
+
+
+audioSrc = AudioStreamer()
+audioSrc.get_preview(song[0], song[1])
+
+# get_sound(song[2])
 
 # Make sure song title is in the list of songs, and sort this list
 if (str(song[0]) + " - " + str(song[1])) not in lst:
