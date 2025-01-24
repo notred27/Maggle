@@ -29,6 +29,8 @@ def getSong(id, secret):
             artist = val['track']['artists'][0]['name']
             songs.append([val['track']['name'], artist , val['track']['preview_url'], val['track']['album']['images'][1]['url']])
 
+    print(spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['name'], spotify.playlist(playlist['uri'])['tracks']['items'][0]['track']['artists'][0]['name'])
+
     song_index = random.randint(0, len(songs) - 1)
     
     return songs[song_index]
@@ -63,12 +65,12 @@ def getSongTitles(id, secret):
             playlists = None 
 
     # Write to json datafile
-    out = open("datafile.json", "w")
+    out = open("assets\datafile.json", "w")
     json_out_data = json.dumps([target_username, title_list])
     out.write(json_out_data)
     out.close()
 
-    input = open("datafile.json", "r")
+    input = open("assets\datafile.json", "r")
     lst.clear()
     name, lst = json.loads(input.read())
     input.close()
@@ -144,7 +146,7 @@ def reset_game():
     get_img(song[3])
     get_sound(song[2])
 
-    newImg = ImageTk.PhotoImage(Image.open("cover.jpg").resize((150,150)))
+    newImg = ImageTk.PhotoImage(Image.open("assets\cover.jpg").resize((150,150)))
     cover_lbl.configure(image=newImg)
     cover_lbl.image = newImg
 
@@ -172,7 +174,7 @@ x = []  # Using this list is a janky way to cancel all prev timers, fix when you
 def play_music():
     global music_playing, x
     if not music_playing:
-        mixer.music.load('mystery.mp3') #Loading Music File
+        mixer.music.load('assets\mystery.mp3') #Loading Music File
         mixer.music.set_volume(0.3)
         mixer.music.play() #Playing Music with Pygame
 
@@ -221,20 +223,20 @@ def submit_answer():
 # Scrape the mp3 file from Spotify's API
 def get_sound(url):
     r = requests.get(url)
-    with open('mystery.mp3', 'wb') as f:
+    with open('assets\mystery.mp3', 'wb') as f:
         f.write(r.content)
         f.close()
 
 # Scrape the cover jpg from Spotify's API
 def get_img(url):
     r = requests.get(url)
-    with open('cover.jpg', 'wb') as f:
+    with open('assets\cover.jpg', 'wb') as f:
         f.write(r.content)
         f.close()
 
 # Save the current streak to the json file
 def save_streak():
-    out = open("streak.json", "w")
+    out = open("assets\streak.json", "w")
     json_out_data = json.dumps([best_streak, current_streak])
     out.write(json_out_data)
     out.close()
@@ -291,12 +293,12 @@ client_ID = os.getenv('client_id')
 client_S = os.getenv('client_secret')
 
 # Get data for best and current streaks from json file
-streak = open("streak.json", "r")
+streak = open("assets\streak.json", "r")
 [best_streak, current_streak] = json.loads(streak.read())
 streak.close()
 
 # Load the json file with song titles, and make sure they are for the correct user
-input = open("datafile.json", "r")
+input = open("assets\datafile.json", "r")
 name, lst = json.loads(input.read())
 
 if name != target_username:
@@ -326,7 +328,7 @@ bgColor = '#121212'
 root = Tk()
 root.protocol("WM_DELETE_WINDOW", on_closing)
 root.title('Maggle')        # Title for window
-root.iconbitmap('M.ico')    # Set icon for window
+root.iconbitmap('assets\M.ico')    # Set icon for window
 
 root.geometry("500x420")
 root.option_add("*Font", ("Adobe Garamond Pro Bold", 10))
@@ -372,7 +374,7 @@ info.pack_forget()
 info.pack(pady=5)
 
 # Create the play button
-play_img = ImageTk.PhotoImage(Image.open("p2.png").resize((30,30)))
+play_img = ImageTk.PhotoImage(Image.open("assets\p2.png").resize((30,30)))
 play_btn = Button(root, image = play_img, borderwidth=0, command=play_music)
 play_btn.pack_forget()
 play_btn.pack()
@@ -413,7 +415,7 @@ btns_frame.pack()
 
 
 # Create the cover image to show after a game over
-coverImg = ImageTk.PhotoImage(Image.open("cover.jpg").resize((150,150)))
+coverImg = ImageTk.PhotoImage(Image.open("assets\cover.jpg").resize((150,150)))
 cover_lbl = Label(root, image = coverImg, width = 150, height = 150, borderwidth=0)
 cover_lbl.pack_forget()
 
