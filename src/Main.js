@@ -17,7 +17,7 @@ export default function Main() {
 
   const targetSong = useRef(null);
 
-  const [audioUrl, setAudioUrl] = useState("https://cdnt-preview.dzcdn.net/api/1/1/8/2/e/0/82e60f2a537430569bdfcc6f590cafac.mp3?hdnea=exp=1737849874~acl=/api/1/1/8/2/e/0/82e60f2a537430569bdfcc6f590cafac.mp3*~data=user_id=0,application_id=42~hmac=35a955317071e56e24720d42fe7e979128c7891959bb9c7b7b36ddcc5358b4c8"); // State for the audio URL
+  const [audioUrl, setAudioUrl] = useState("https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3?hdnea=exp=1737876186~acl=/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3*~data=user_id=0,application_id=42~hmac=47ca850c9678845ac6fdf226b1f2f6090d6a2ef4d0602707d0641d2d6b16ba0e"); // State for the audio URL
   const [volume, setVolume] = useState(0.5);
 
   const [play, { stop, sound }] = useSound(audioUrl, { volume: volume }); // Initialize useSound
@@ -108,8 +108,8 @@ export default function Main() {
     }
 
     const tracks = await response.json();
-
-    setAudioUrl(tracks.data[0].preview)
+    console.log(tracks.data[0].preview)
+    // setAudioUrl(tracks.data[0].preview)
 
   }
 
