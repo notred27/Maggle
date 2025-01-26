@@ -99,6 +99,8 @@ export default function Main() {
   async function getAudioPreview(query) {
     const params = new URLSearchParams({ q: query });
 
+    console.log(`https://api.deezer.com/search?${params.toString()}`)
+
     // Make the GET request
     const response = await fetch(`https://api.deezer.com/search?${params.toString()}`);
 
@@ -109,7 +111,7 @@ export default function Main() {
 
     const tracks = await response.json();
     console.log(tracks.data[0].preview)
-    // setAudioUrl(tracks.data[0].preview)
+    setAudioUrl(tracks.data[0].preview)
 
   }
 
