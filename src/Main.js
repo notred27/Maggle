@@ -21,6 +21,8 @@ export default function Main() {
   const [volume, setVolume] = useState(0.5);
 
   const [play, { stop, sound }] = useSound(audioUrl, { volume: volume }); // Initialize useSound
+  const [testplay] = useSound("https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3?hdnea=exp=1737876186~acl=/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3*~data=user_id=0,application_id=42~hmac=47ca850c9678845ac6fdf226b1f2f6090d6a2ef4d0602707d0641d2d6b16ba0e", { volume: volume }); // Initialize useSound
+
   const [isPlaying, setIsPlaying] = useState(false);
 
 
@@ -288,6 +290,9 @@ export default function Main() {
       <span>
         <button onClick={skipGuess}>Skip</button>
         <button onClick={handleToggle} disabled={!audioUrl} >Play</button>
+
+        <button onClick={testplay} disabled={!audioUrl} >test</button>
+
         <button onClick={nextGuess}>Submit</button>
 
         <button onClick={chooseNewSong}>New Song</button>
