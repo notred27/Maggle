@@ -10,7 +10,7 @@ function LoginPage() {
   const nav = useNavigate();
 
   const CLIENT_ID = "8fd502b5eb924a4187198525df2b4709"
-  const REDIRECT_URI = "http://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/"
+  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/"
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
   const RESPONSE_TYPE = "token"
 
