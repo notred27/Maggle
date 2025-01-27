@@ -246,7 +246,7 @@ export default function Main() {
             <div className='dropdownContent'>
               <img src = {speakerIcon} alt = 'speaker' style={{width:"20px"}} />
               <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
-              <br/>
+          
               <button onClick={logout}>Logout</button>
             </div>
           </span>
