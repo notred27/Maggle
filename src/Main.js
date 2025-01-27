@@ -18,7 +18,7 @@ export default function Main() {
   const targetSong = useRef(null);
 
   // Hooks for play button
-  const [audioUrl, setAudioUrl] = useState("https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3?hdnea=exp=1737876186~acl=/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3*~data=user_id=0,application_id=42~hmac=47ca850c9678845ac6fdf226b1f2f6090d6a2ef4d0602707d0641d2d6b16ba0e"); // State for the audio URL
+  const [audioUrl, setAudioUrl] = useState(""); // State for the audio URL
   const [volume, setVolume] = useState(0.5);
   const [maxPlaybackLength, setMaxPlaybackLength] = useState(1000);
 
