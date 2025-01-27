@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
-import useSound from 'use-sound'
 import SearchBar from './SearchBar';
 import { useNavigate } from 'react-router-dom';
-
+import PlayButton from './PlayButton';
+import speakerIcon from './icons/speaker-icon.png'
 
 
 export default function Main() {
@@ -17,18 +17,17 @@ export default function Main() {
 
   const targetSong = useRef(null);
 
+  // Hooks for play button
   const [audioUrl, setAudioUrl] = useState("https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3?hdnea=exp=1737876186~acl=/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3*~data=user_id=0,application_id=42~hmac=47ca850c9678845ac6fdf226b1f2f6090d6a2ef4d0602707d0641d2d6b16ba0e"); // State for the audio URL
   const [volume, setVolume] = useState(0.5);
+  const [maxPlaybackLength, setMaxPlaybackLength] = useState(1000);
 
-  const [play, { stop, sound }] = useSound(audioUrl, { volume: volume }); // Initialize useSound
-  const [testplay] = useSound("https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3?hdnea=exp=1737876186~acl=/api/1/1/3/2/a/0/32a9d8c7c9c16e67b65d627342b7be79.mp3*~data=user_id=0,application_id=42~hmac=47ca850c9678845ac6fdf226b1f2f6090d6a2ef4d0602707d0641d2d6b16ba0e", { volume: volume }); // Initialize useSound
 
-  const [isPlaying, setIsPlaying] = useState(false);
 
 
   const [gameOver, setGameOver] = useState(false);
 
-  const timeoutRef = useRef(null);
+  
 
 
   const [bestScore, setBestScore] = useState(parseInt(window.localStorage.getItem("bestStreak")) | 0);
@@ -43,6 +42,8 @@ export default function Main() {
     getProfile();
   }, [])
 
+
+
   useEffect(() => {
     if (profile) {
       getPlaylists(); // Call getPlaylists when profile is set
@@ -50,30 +51,26 @@ export default function Main() {
   }, [profile]);
 
 
+
   useEffect(() => {
     chooseNewSong()
   }, [searchItems])
 
 
-  // Stop playing when the audioUrl changes
-  useEffect(() => {
-    if (sound) sound.stop();
-    setIsPlaying(false);
-  }, [audioUrl, sound]);
-
+ 
 
   useEffect(() => {
 
-    if(gameOver) {
-      if(guesses[guesses.length-1] === targetSong.current) {
+    if (gameOver) {
+      if (guesses[guesses.length - 1] === targetSong.current) {
         setScore((prevCount) => prevCount + 1);
       } else {
         setScore(0);
       }
     }
-    
 
-   
+
+
   }, [gameOver])
 
 
@@ -87,6 +84,8 @@ export default function Main() {
 
   function chooseNewSong() {
     setGameOver(false);
+    setMaxPlaybackLength(1000);
+
     if (searchItems.length > 0) {
 
       const song = searchItems[Math.floor(Math.random() * searchItems.length)]
@@ -192,9 +191,12 @@ export default function Main() {
     if (guesses.length < 5 && searchItems.includes(val)) {
 
       setGuesses([...guesses, val]);
+      setMaxPlaybackLength((2 ** (guesses.length + 1)) * 1000)
 
       if (guesses.length === 4 || submit_ref.current.value === targetSong.current) {
         setGameOver(true);
+        setMaxPlaybackLength(30000);
+
       }
 
       submit_ref.current.value = "";
@@ -207,100 +209,82 @@ export default function Main() {
   function skipGuess() {
     if (guesses.length < 5) {
       setGuesses([...guesses, "Skipped..."]);
+      setMaxPlaybackLength((2 ** (guesses.length + 1)) * 1000)
+
     }
 
     if (guesses.length === 4) {
       setGameOver(true);
+      setMaxPlaybackLength(30000);
+
     }
   }
 
 
 
-  const handleToggle = () => {
-    if (isPlaying) {
-      stop(); // Stop the audio
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-    } else {
-      play(); // Play the audio
-
-      timeoutRef.current = setTimeout(() => {
-        stop();
-        setIsPlaying(false); // Update state to indicate the sound has stopped
-
-      }, (2 ** guesses.length) * 1000); // 5000 ms = 5 seconds
-    }
-    setIsPlaying(!isPlaying); // Toggle the playing state
-  };
-
-
-  const handleFullToggle = () => {
-    if (isPlaying) {
-      stop(); // Stop the audio
-
-    } else {
-      play(); // Play the audio
-
-    }
-    setIsPlaying(!isPlaying); // Toggle the playing state
-  };
-
-
   return (
     <div className="App">
 
-      <header>
-        {profile !== null &&
-          <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+      <header className='appHeader'>
+        {profile !== null && <>
+          <span className='streakText'>
+            Current Streak: {score}
 
-            <img src={profile.images[1].url} style={{ width: "40px", height: "40px", borderRadius: "20px" }} alt='spotifyProfileImg' />
-            <h3 style={{ margin: "0px", marginLeft: "10px" }}>{profile.display_name}</h3>
-            <button onClick={logout}>Logout</button>
-
-
-            Current Streak: {score} 
-
-            <br/>
+            <br />
             Best Streak: {bestScore}
-          </div>
+          </span>
 
-          
+          <h1>Maggle!</h1>
+
+
+          <span className='dropdownMenu'>
+            <span className='profileBadge'>
+              <img src={profile.images[1].url}  alt='spotifyProfileImg' />
+              <h3>{profile.display_name}</h3>
+            </span>
+            
+            <div className='dropdownContent'>
+              <img src = {speakerIcon} alt = 'speaker' style={{width:"20px"}} />
+              <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
+              <br/>
+              <button onClick={logout}>Logout</button>
+            </div>
+          </span>
+        </>
+
         }
 
       </header>
 
-      <h1>Maggle!</h1>
+
 
       {!gameOver && <>
-      <div style={{ minHeight: "14em", height: "14em" }}>
+        <div className='guessContainer' >
 
-        {guesses.map(g => <h3 style={{ color: `${g === targetSong.current ? "green" : "red"}` }}>{g}</h3>)}
+          {guesses.map(g => <h3 style={{ color: `${g === targetSong.current ? "green" : "red"}` }}>{g}</h3>)}
 
-      </div>
+        </div>
 
-      <br />
+        <br />
 
-      <SearchBar searchRef={submit_ref} items={searchItems} />
+        <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
 
-      <br />
 
-      <span>
-        <button onClick={skipGuess}>Skip</button>
-        <button onClick={handleToggle} disabled={!audioUrl} >Play</button>
 
-        <button onClick={testplay} disabled={!audioUrl} >test</button>
 
-        <button onClick={nextGuess}>Submit</button>
+        <SearchBar searchRef={submit_ref} items={searchItems} />
+
+
+        <span className='submissionBar'> 
+          <button onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
+          <button onClick={nextGuess}>Submit</button>
+        </span>
+
+
+
 
         <button onClick={chooseNewSong}>New Song</button>
 
-      </span>
-
-
-      <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
       </>}
 
       {gameOver &&
@@ -310,8 +294,8 @@ export default function Main() {
           <h2>{targetSong.current}</h2>
 
 
-          <button onClick={handleFullToggle} disabled={!audioUrl} >Play</button>
-          <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
+          <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
+
 
 
           <button onClick={chooseNewSong}>New Song</button>
