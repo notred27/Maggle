@@ -104,15 +104,9 @@ export default function Main() {
 
     // Make the GET request
     const response = await fetch(`https://api.deezer.com/search?${params.toString()}`, {
-      method: 'GET', 
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-        // Add other headers as needed
-      },
-      // body: JSON.stringify(data), // Only for POST, PUT, etc.
-    })
+      method: 'GET',
+      mode: 'no-cors', // Allows the request to bypass CORS but returns an opaque response
+    });
     // Parse and return the JSON response
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
