@@ -35,15 +35,17 @@ export default function SearchBar({ searchRef, items }) {
 
     return (
         <div style={{position:"relative"}}>
-        <input className="searchInput" ref={searchRef} onChange={updateFilter} placeholder="Search for the song!" />
-        
-        <div style={{position:"absolute", backgroundColor:"white", width: "30vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+
+<div style={{position:"absolute", bottom:"40px", backgroundColor:"white", width: "30vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             
 
             {filter !== "" && searchRef.current === document.activeElement && rows}
 
 
         </div>
+        <input className="searchInput" ref={searchRef} onChange={updateFilter} placeholder="Search for the song!" />
+        
+        
         </div>
     )
 }

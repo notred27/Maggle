@@ -27,7 +27,7 @@ export default function Main() {
 
   const [gameOver, setGameOver] = useState(false);
 
-  
+
 
 
   const [bestScore, setBestScore] = useState(parseInt(window.localStorage.getItem("bestStreak")) | 0);
@@ -57,7 +57,7 @@ export default function Main() {
   }, [searchItems])
 
 
- 
+
 
   useEffect(() => {
 
@@ -103,7 +103,15 @@ export default function Main() {
     console.log(`https://api.deezer.com/search?${params.toString()}`)
 
     // Make the GET request
-    const response = await fetch(`https://api.deezer.com/search?${params.toString()}`);
+    const response = await fetch(`https://api.deezer.com/search?${params.toString()}`,  {
+      method: 'GET', 
+      headers: {
+        'Content-Type': 'application/json', 
+        'Accept': 'application/json', 
+        'Origin': 'https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/'
+      },
+      credentials: 'include' // Needed for cookies and credentials
+    });
     // Parse and return the JSON response
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -238,14 +246,14 @@ export default function Main() {
 
           <span className='dropdownMenu'>
             <span className='profileBadge'>
-              <img src={profile.images[1].url}  alt='spotifyProfileImg' />
+              <img src={profile.images[1].url} alt='spotifyProfileImg' />
               <h3>{profile.display_name}</h3>
             </span>
-            
+
             <div className='dropdownContent'>
-              <img src = {speakerIcon} alt = 'speaker' style={{width:"20px"}} />
+              <img src={speakerIcon} alt='speaker' style={{ width: "20px" }} />
               <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
-              <br/>
+              <br />
               <button onClick={logout}>Logout</button>
             </div>
           </span>
@@ -264,25 +272,29 @@ export default function Main() {
 
         </div>
 
-        <br />
 
-        <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
-
+        <div className='guessControlContainer'>
 
 
 
-        <SearchBar searchRef={submit_ref} items={searchItems} />
+          <span className='submissionBar'>
+            <span>0:00</span>
+            <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
+            <span>0:10</span>
+          </span>
+
+          <SearchBar searchRef={submit_ref} items={searchItems} />
+
+          <span className='submissionBar'>
+            <button onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
+            <button onClick={nextGuess}>Submit</button>
+          </span>
 
 
-        <span className='submissionBar'> 
-          <button onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
-          <button onClick={nextGuess}>Submit</button>
-        </span>
+        </div>
 
 
-
-
-        <button onClick={chooseNewSong}>New Song</button>
+        {/* <button onClick={chooseNewSong}>New Song</button> */}
 
       </>}
 
