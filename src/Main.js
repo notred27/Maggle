@@ -103,15 +103,7 @@ export default function Main() {
     console.log(`https://api.deezer.com/search?${params.toString()}`)
 
     // Make the GET request
-    const response = await fetch(`https://api.deezer.com/search?${params.toString()}`,  {
-      method: 'GET', 
-      headers: {
-        'Content-Type': 'application/json', 
-        'Accept': 'application/json', 
-        'Origin': 'https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/'
-      },
-      credentials: 'include' // Needed for cookies and credentials
-    });
+    const response = await fetch(`https://api.deezer.com/search?${params.toString()}`);
     // Parse and return the JSON response
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -150,6 +142,9 @@ export default function Main() {
     const songs = {};
     const accessToken = window.localStorage.getItem("token");
 
+    const userDict = new Set()
+    const playlistDict = {}
+
     const response = await fetch(`https://api.spotify.com/v1/users/${profile.id}/playlists`, {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -160,6 +155,14 @@ export default function Main() {
 
     // Wait for all playlist track fetching to complete
     const playlistPromises = playlists.items.map(async (p) => {
+
+      try{
+        playlistDict[p.name] ={ url: p.images[0].url, songs:[]}
+
+      } catch {
+        playlistDict[p.name] = { url: null, songs:[]}
+      }
+
       const songList = await fetch(`https://api.spotify.com/v1/playlists/${p.id}/tracks`, {
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -170,6 +173,8 @@ export default function Main() {
 
       // Process tracks for this playlist
       playlistSongs.items.forEach((s) => {
+        userDict.add(s.added_by.id) 
+
         const artists = s.track.artists.map((x) => x.name).join(", ");
         try {
           songs[`${s.track.name} - ${artists}`] = s.track.album.images[1]?.url || null;
@@ -177,11 +182,31 @@ export default function Main() {
           console.error("Error processing track:", s, error);
         }
       });
+
+
+    //   playlistSongs.items.forEach((s) => {
+    //     // console.log(s.added_by.id)
+    //     const artists = s.track.artists.map((x) => x.name).join(", ");
+    //     try {
+    //       playlistDict[p.name].songs.push({name:`${s.track.name} - ${artists}`, imgUrl: s.track.album.images[1]?.url || null, addedBy: s.added_by.id})
+
+    //     } catch (error) {
+    //       console.error("Error processing track:", s, error);
+    //     }
+    //   });
     });
 
     // Wait for all promises 
     await Promise.all(playlistPromises);
 
+
+    // Structure: list of songs, each contains a song name, a user reference (key), a playlist reference (key), and a preview url
+
+    // playlist dict of name and image url
+    // image dict of name and image url
+
+    console.log(playlistDict)
+    console.log(userDict)
 
     setSongDict(songs);
     setSearchItems(Object.keys(songs));
@@ -228,6 +253,15 @@ export default function Main() {
   }
 
 
+  let z = [];
+
+  for (let i = 0; i < 5; i++) {
+    if (i < guesses.length) {
+      z.push(<h4 className='guessText' style={{ color: `${guesses[i] === "Skipped..." ? "#74448c" : "red"}` }}>{guesses[i]}</h4>)
+    } else {
+      z.push(<h4 className='guessText'>&nbsp;</h4>)
+    }
+  }
 
   return (
     <div className="App">
@@ -268,7 +302,7 @@ export default function Main() {
       {!gameOver && <>
         <div className='guessContainer' >
 
-          {guesses.map(g => <h3 style={{ color: `${g === targetSong.current ? "green" : "red"}` }}>{g}</h3>)}
+          {z}
 
         </div>
 
@@ -286,8 +320,8 @@ export default function Main() {
           <SearchBar searchRef={submit_ref} items={searchItems} />
 
           <span className='submissionBar'>
-            <button onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
-            <button onClick={nextGuess}>Submit</button>
+            <button id='skipBtn' onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
+            <button id='submitBtn' onClick={nextGuess}>Submit</button>
           </span>
 
 
@@ -299,19 +333,44 @@ export default function Main() {
       </>}
 
       {gameOver &&
-        <>
-          <h3>The song was:</h3>
-          <img src={songDict[targetSong.current]} alt='albumCover' />
-          <h2>{targetSong.current}</h2>
+        <div className='gameoverContainer'>
+          <div style={{ width: "30vw" }}>
+
+            <img style={{ height: "40vh" }} src={songDict[targetSong.current]} alt='albumCover' />
+            <h3>{targetSong.current}</h3>
+
+            <h4 style={{justifyContent:"center", alignItems:"center"}} >Added by <img style={{height:"25px", width:"25px", borderRadius:"15px"}} src={profile.images[1].url} alt='spotifyProfileImg' /> <b>{profile.display_name}</b> to (playlist name)</h4>
 
 
-          <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
+          </div>
 
 
+          <div className='gameoverInfo'>
 
-          <button onClick={chooseNewSong}>New Song</button>
+            {guesses[guesses.length - 1] === targetSong.current ?
+              <h2>Congrats! You got it in {guesses.length} guesses!</h2>
+              :
+              <h2>Too bad, you didn't get this one :(</h2>
+            }
 
-        </>
+            <div style={{display:"flex", flexDirection:"row"}}>
+              {guesses.map(g => [
+                <div className='guessTile' style={{backgroundColor:`${g === targetSong.current ? "green" : g === "Skipped..." ? "gray": "red"}`}}>&nbsp;<span>{g}</span></div>
+              ])}
+            </div>
+
+
+            <h3>Add to playlist</h3>
+
+            
+            <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
+
+
+            <button id='retryBtn' onClick={chooseNewSong}>New Song</button>
+
+          </div>
+
+        </div>
       }
     </div>
   );

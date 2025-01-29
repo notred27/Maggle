@@ -26,7 +26,7 @@ export default function SearchBar({ searchRef, items }) {
             return;
         }
 
-        if(rows.length < 10) {
+        if (rows.length < 10) {
             rows.push(<SearchBarEntry value={i} setText={setText} />)
 
         }
@@ -34,18 +34,16 @@ export default function SearchBar({ searchRef, items }) {
 
 
     return (
-        <div style={{position:"relative"}}>
+        <div style={{ position: "relative" }}>
 
-<div style={{position:"absolute", bottom:"40px", backgroundColor:"white", width: "30vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            
+            <div style={{ position: "absolute", left:"10px", bottom: "30px", backgroundColor: "white", width: "30vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius:"5px" }}>
+                {filter !== "" && searchRef.current === document.activeElement && rows}
+            </div>
 
-            {filter !== "" && searchRef.current === document.activeElement && rows}
+
+            <input className="searchInput" ref={searchRef} onChange={updateFilter} placeholder="Search for the song!" />
 
 
-        </div>
-        <input className="searchInput" ref={searchRef} onChange={updateFilter} placeholder="Search for the song!" />
-        
-        
         </div>
     )
 }
