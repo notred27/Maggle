@@ -19,7 +19,11 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength }) {
             stop()
         };
         setIsPlaying(false);
+
+        return () => stop();
     }, [audioUrl, sound]);
+
+  
 
 
     const handleToggle = () => {
@@ -31,6 +35,7 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength }) {
                 timeoutRef.current = null;
             }
         } else {
+            console.log("Playing sound...");
             play(); // Play the audio
 
             timeoutRef.current = setTimeout(() => {

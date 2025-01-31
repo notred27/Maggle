@@ -4,6 +4,8 @@ import SearchBar from './SearchBar';
 import { useNavigate } from 'react-router-dom';
 import PlayButton from './PlayButton';
 import speakerIcon from './icons/speaker-icon.png'
+import Gameover from './Gameover';
+import PlaylistSelect from './PlaylistSelect';
 
 
 export default function Main() {
@@ -14,8 +16,13 @@ export default function Main() {
   const [searchItems, setSearchItems] = useState([])
 
   const [songDict, setSongDict] = useState({});
+  const [userDict, setUserDict] = useState({});
+
 
   const targetSong = useRef(null);
+  const targetPlaylist = useRef(null);
+  const fixedPlaylist = useRef(null);
+
 
   // Hooks for play button
   const [audioUrl, setAudioUrl] = useState(null); // State for the audio URL
@@ -62,7 +69,7 @@ export default function Main() {
   useEffect(() => {
 
     if (gameOver) {
-      if (guesses[guesses.length - 1] === targetSong.current) {
+      if (guesses[guesses.length - 1] === targetSong.current.name) {
         setScore((prevCount) => prevCount + 1);
       } else {
         setScore(0);
@@ -86,9 +93,21 @@ export default function Main() {
     setGameOver(false);
     setMaxPlaybackLength(1000);
 
-    if (searchItems.length > 0) {
+    const playlistKeys = Object.keys(songDict);
 
-      const song = searchItems[Math.floor(Math.random() * searchItems.length)]
+    if (playlistKeys.length > 0) {
+
+      let song;
+      if (fixedPlaylist.current === null) {
+        const newPlaylist = playlistKeys[Math.floor(Math.random() * playlistKeys.length)]
+        targetPlaylist.current = newPlaylist;
+        song = songDict[targetPlaylist.current].songs[Math.floor(Math.random() * songDict[targetPlaylist.current].songs.length)]
+
+      } else {
+        targetPlaylist.current = fixedPlaylist.current;
+        song = songDict[fixedPlaylist.current].songs[Math.floor(Math.random() * songDict[fixedPlaylist.current].songs.length)]
+
+      }
 
       targetSong.current = song;
       getAudioPreview(song);
@@ -98,7 +117,7 @@ export default function Main() {
   }
 
   async function getAudioPreview(query) {
-    const params = new URLSearchParams({ q: query });
+    const params = new URLSearchParams({ q: query.name });
 
     console.log(`https://api.deezer.com/search?${params.toString()}`)
 
@@ -139,10 +158,10 @@ export default function Main() {
 
 
   async function getPlaylists() {
-    const songs = {};
+    const songs = new Set();
     const accessToken = window.localStorage.getItem("token");
 
-    const userDict = new Set()
+    const userSet = new Set()
     const playlistDict = {}
 
     const response = await fetch(`https://api.spotify.com/v1/users/${profile.id}/playlists`, {
@@ -156,11 +175,11 @@ export default function Main() {
     // Wait for all playlist track fetching to complete
     const playlistPromises = playlists.items.map(async (p) => {
 
-      try{
-        playlistDict[p.name] ={ url: p.images[0].url, songs:[]}
+      try {
+        playlistDict[p.name] = { url: p.images[0].url, songs: [], playlistUrl: p.external_urls.spotify }
 
       } catch {
-        playlistDict[p.name] = { url: null, songs:[]}
+        playlistDict[p.name] = { url: null, songs: [] }
       }
 
       const songList = await fetch(`https://api.spotify.com/v1/playlists/${p.id}/tracks`, {
@@ -171,45 +190,44 @@ export default function Main() {
 
       const playlistSongs = await songList.json();
 
-      // Process tracks for this playlist
       playlistSongs.items.forEach((s) => {
-        userDict.add(s.added_by.id) 
-
+        // console.log(s.added_by.id)
         const artists = s.track.artists.map((x) => x.name).join(", ");
         try {
-          songs[`${s.track.name} - ${artists}`] = s.track.album.images[1]?.url || null;
+          playlistDict[p.name].songs.push({ name: `${s.track.name} - ${artists}`, imgUrl: s.track.album.images[1]?.url || null, addedBy: s.added_by.id })
+          songs.add(`${s.track.name} - ${artists}`)
+          userSet.add(s.added_by.id)
         } catch (error) {
           console.error("Error processing track:", s, error);
         }
       });
-
-
-    //   playlistSongs.items.forEach((s) => {
-    //     // console.log(s.added_by.id)
-    //     const artists = s.track.artists.map((x) => x.name).join(", ");
-    //     try {
-    //       playlistDict[p.name].songs.push({name:`${s.track.name} - ${artists}`, imgUrl: s.track.album.images[1]?.url || null, addedBy: s.added_by.id})
-
-    //     } catch (error) {
-    //       console.error("Error processing track:", s, error);
-    //     }
-    //   });
     });
 
     // Wait for all promises 
     await Promise.all(playlistPromises);
 
 
-    // Structure: list of songs, each contains a song name, a user reference (key), a playlist reference (key), and a preview url
+    const tmpUserDict = {}
 
-    // playlist dict of name and image url
-    // image dict of name and image url
+    const userPromises = Array.from(userSet).map(async (username) => {
+      const userRequest = await fetch(`https://api.spotify.com/v1/users/${username}`, {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      });
 
-    console.log(playlistDict)
-    console.log(userDict)
+      const userDetails = await userRequest.json();
 
-    setSongDict(songs);
-    setSearchItems(Object.keys(songs));
+
+      tmpUserDict[username] = { name: userDetails.display_name, url: userDetails.images[0].url, profileUrl: userDetails.external_urls.spotify }
+    })
+
+
+    await Promise.all(userPromises);
+
+    setUserDict(tmpUserDict)
+    setSongDict(playlistDict);
+    setSearchItems(Array.from(songs));
   }
 
 
@@ -225,16 +243,13 @@ export default function Main() {
       setGuesses([...guesses, val]);
       setMaxPlaybackLength((2 ** (guesses.length + 1)) * 1000)
 
-      if (guesses.length === 4 || submit_ref.current.value === targetSong.current) {
+      if (guesses.length === 4 || submit_ref.current.value === targetSong.current.name) {
         setGameOver(true);
         setMaxPlaybackLength(30000);
-
       }
 
       submit_ref.current.value = "";
     }
-
-
   }
 
 
@@ -257,7 +272,7 @@ export default function Main() {
 
   for (let i = 0; i < 5; i++) {
     if (i < guesses.length) {
-      z.push(<h4 className='guessText' style={{ color: `${guesses[i] === "Skipped..." ? "#74448c" : "red"}` }}>{guesses[i]}</h4>)
+      z.push(<h4 className='guessText' style={{ color: `${guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red"}` }}>{guesses[i]}</h4>)
     } else {
       z.push(<h4 className='guessText'>&nbsp;</h4>)
     }
@@ -299,78 +314,50 @@ export default function Main() {
 
 
 
-      {!gameOver && <>
+      {!gameOver &&
+      // <div className='middleElem'>
+
+
         <div className='guessContainer' >
 
           {z}
 
         </div>
 
+        // </div>
 
+      }
+
+
+      {!gameOver &&
         <div className='guessControlContainer'>
+          <div>
 
 
+            <span className='submissionBar'>
+              <span>0:00</span>
+              <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
+              <span>0:{String(maxPlaybackLength / 1000).padStart(2, '0')}</span>
+            </span>
 
-          <span className='submissionBar'>
-            <span>0:00</span>
-            <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
-            <span>0:10</span>
-          </span>
+            <SearchBar searchRef={submit_ref} items={searchItems} />
 
-          <SearchBar searchRef={submit_ref} items={searchItems} />
+            <span className='submissionBar'>
+              <button id='skipBtn' onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
 
-          <span className='submissionBar'>
-            <button id='skipBtn' onClick={skipGuess}>Skip (+{maxPlaybackLength / 1000}s)</button>
-            <button id='submitBtn' onClick={nextGuess}>Submit</button>
-          </span>
+              <PlaylistSelect songDict={songDict} fixedPlaylist={fixedPlaylist} chooseNewSong={chooseNewSong} />
 
+              <button id='submitBtn' onClick={nextGuess}>Submit</button>
+            </span>
+          </div>
 
         </div>
-
-
-        {/* <button onClick={chooseNewSong}>New Song</button> */}
-
-      </>}
+      }
 
       {gameOver &&
-        <div className='gameoverContainer'>
-          <div style={{ width: "30vw" }}>
+        <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={guesses} chooseNewSong={chooseNewSong} gameOver={gameOver} volume={volume} audio={audioUrl}>
 
-            <img style={{ height: "40vh" }} src={songDict[targetSong.current]} alt='albumCover' />
-            <h3>{targetSong.current}</h3>
-
-            <h4 style={{justifyContent:"center", alignItems:"center"}} >Added by <img style={{height:"25px", width:"25px", borderRadius:"15px"}} src={profile.images[1].url} alt='spotifyProfileImg' /> <b>{profile.display_name}</b> to (playlist name)</h4>
-
-
-          </div>
-
-
-          <div className='gameoverInfo'>
-
-            {guesses[guesses.length - 1] === targetSong.current ?
-              <h2>Congrats! You got it in {guesses.length} guesses!</h2>
-              :
-              <h2>Too bad, you didn't get this one :(</h2>
-            }
-
-            <div style={{display:"flex", flexDirection:"row"}}>
-              {guesses.map(g => [
-                <div className='guessTile' style={{backgroundColor:`${g === targetSong.current ? "green" : g === "Skipped..." ? "gray": "red"}`}}>&nbsp;<span>{g}</span></div>
-              ])}
-            </div>
-
-
-            <h3>Add to playlist</h3>
-
-            
-            <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
-
-
-            <button id='retryBtn' onClick={chooseNewSong}>New Song</button>
-
-          </div>
-
-        </div>
+        </Gameover>
       }
     </div>
   );

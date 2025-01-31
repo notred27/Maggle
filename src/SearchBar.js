@@ -36,7 +36,7 @@ export default function SearchBar({ searchRef, items }) {
     return (
         <div style={{ position: "relative" }}>
 
-            <div style={{ position: "absolute", left:"10px", bottom: "30px", backgroundColor: "white", width: "30vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius:"5px" }}>
+            <div style={{ position: "absolute", left:"10px", bottom: "30px", backgroundColor: "white", width: "40vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius:"5px" }}>
                 {filter !== "" && searchRef.current === document.activeElement && rows}
             </div>
 
