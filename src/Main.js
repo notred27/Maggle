@@ -6,6 +6,7 @@ import PlayButton from './PlayButton';
 import speakerIcon from './icons/speaker-icon.png'
 import Gameover from './Gameover';
 import PlaylistSelect from './PlaylistSelect';
+import ThemeOption from './ThemeOption';
 
 
 export default function Main() {
@@ -135,8 +136,10 @@ export default function Main() {
   }
 
   function logout() {
-    window.localStorage.removeItem("access_token");
-    window.localStorage.removeItem("refresh_token");
+    // window.localStorage.removeItem("access_token");
+    // window.localStorage.removeItem("refresh_token");
+    window.localStorage.removeItem("token")
+
     nav("/");
   }
 
@@ -300,9 +303,24 @@ export default function Main() {
             </span>
 
             <div className='dropdownContent'>
+
+              <h4>Audio</h4>
               <img src={speakerIcon} alt='speaker' style={{ width: "20px" }} />
               <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
               <br />
+              
+              <h4>Theme</h4>
+              <div className='theme-options'>
+                <ThemeOption theme={"red"} />
+                <ThemeOption theme={"purple"} />
+                <ThemeOption theme={"blue"} />
+                <ThemeOption theme={"green"} />
+
+
+
+              </div>
+
+              <h4>Log Out</h4>
               <button onClick={logout}>Logout</button>
             </div>
           </span>

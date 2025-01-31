@@ -1,24 +1,6 @@
 :root{
-  --page-background-color: #1b191f;
-  /* --page-background-color: #211010; */
-  --secondary-background-color: rgb(17, 17, 24);
-
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-
-  --primary-hover-color: #c2c2c2;
-
-  --primary-btn-color: #681193;
-  --secondary-btn-color: #644276;
-
-
-  --dull-accent-color: #5b4d62;
-}
-
-
-[data-theme="red"] {
   --page-background-color: #3d2929;
-  --secondary-background-color: rgb(18, 1, 1);
+  --secondary-background-color: #120101;
 
   --primary-text-color: #fffff0;
   --secondary-text-color: #000000;
@@ -33,16 +15,60 @@
 }
 
 
-html {
-  background-color: var(--page-background-color);
-  color: var(--primary-text-color);
+[data-theme="red"] {
+  --page-background-color: #231212;
+  --secondary-background-color: #120101;
+  --primary-text-color: #fffff0;
+  --secondary-text-color: #000000;
+  --primary-hover-color: #c2c2c2;
+  --primary-btn-color: #931111;
+  --secondary-btn-color: #764242;
+  --dull-accent-color: #693e3e;
 }
+
+[data-theme="purple"] {
+--page-background-color: #1b191f;
+  --secondary-background-color: #111118;
+  --primary-text-color: #fffff0;
+  --secondary-text-color: #000000;
+  --primary-hover-color: #c2c2c2;
+  --primary-btn-color: #681193;
+  --secondary-btn-color: #644276;
+  --dull-accent-color: #5b4d62;
+}
+
+[data-theme="blue"] {
+--page-background-color: #1a1a24;
+  --secondary-background-color: #111118;
+  --primary-text-color: #fffff0;
+  --secondary-text-color: #000000;
+  --primary-hover-color: #c2c2c2;
+  --primary-btn-color: #112d93;
+  --secondary-btn-color: #424d76;
+  --dull-accent-color: #4d5162;
+}
+
+[data-theme="green"] {
+  --page-background-color: #191a19;
+    --secondary-background-color: #0d0f0d;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #119329;
+    --secondary-btn-color: #42764c;
+    --dull-accent-color: #4e624d;
+  }
+
+
 
 .App {
   text-align: center;
   display: grid;
   grid-template-rows: fit-content 2fr fit-content;
   height: 100vh;
+  transition: background-color 1s ease, color 1s ease;
+   background-color: var(--page-background-color);
+  color: var(--primary-text-color);
 }
 
 
@@ -87,6 +113,11 @@ html {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  background-color: var(--secondary-btn-color);
+  padding: 5px 10px 5px 5px;
+  border-radius: 40px;
+  cursor: pointer;
+
 }
 
 .profileBadge img{
@@ -144,8 +175,15 @@ html {
 .dropdownContent {
   display: none;
   position: absolute;
+  background-color: var(--dull-accent-color);
+  padding: 10px;
 }
 
+.dropdownContent h4{
+  margin-bottom: 5px;
+  text-decoration: underline;
+  text-align: left;
+}
 
 .dropdownMenu:hover .dropdownContent {
   display: block;
@@ -259,6 +297,8 @@ html {
   width: 200px;
   padding: 4px;
   justify-content: center;
+  background-color: black;
+  border-radius: 4px;
 }
 
 .playlistToggleItem:hover{
@@ -277,3 +317,47 @@ html {
   bottom: 30px;
   background-color: black;
 }
+
+.theme-options{
+  display: flex;
+  gap:10px;
+}
+
+
+
+.theme-option{
+  height:25px;
+  width:25px;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+#theme-purple{
+  background-color: purple;
+}
+
+#theme-red{
+  background-color: red;
+}
+
+#theme-blue{
+  background-color: blue;
+}
+
+#theme-green{
+  background-color: green;
+}
+
+.addedByBadge {
+  background-color: var(--dull-accent-color);
+  color: var(--primary-text-color);
+  padding: 0px 10px 0px 8px;
+  border-radius: 10px;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  gap: 5px;
+}
+

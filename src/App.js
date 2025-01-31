@@ -4,6 +4,14 @@ import Login from "./Login"
 import {Routes, Route } from "react-router-dom"
 
 export default function App() {
+
+    const savedTheme = window.localStorage.getItem('theme');
+    if(savedTheme) {
+      document.querySelector('body').setAttribute('data-theme', savedTheme);
+
+
+    }
+
     return (
         <div className="App">
           <Routes>

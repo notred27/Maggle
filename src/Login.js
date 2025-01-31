@@ -33,21 +33,24 @@ function LoginPage() {
   }, [nav])
 
 
-  const logout = () => {
-    setToken("")
-    window.localStorage.removeItem("token")
-  }
+
+  return  (<>
+        <div>
+          <h1>Maggle!</h1>
+          <h3>How well do you know your own playlists? Connect your Spotify account and find out!</h3>
+
+          <br />
+
+          <a style={{ backgroundColor: "var(--primary-btn-color)", color: "var(--primary-text-color)", padding: "10px", borderRadius: "10px" }} href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login with Spotify</a>
+        </div>
 
 
 
-  return <>
+        <h3 style={{ width: "70vw", marginLeft: "auto", marginRight: "auto" }}>NOTICE: Due to technical difficulties (a.k.a. I do not want to pay for a backend server), you must have the "CORS Unblock" extension added and enabled to your browser in order to use this website. This extension can be downloaded <a href="https://chromewebstore.google.com/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino?hl=en">here</a>. Please make sure it is active (The "C" will be orange). Thank you! </h3>
 
-    {!token ?
-      <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
-        to Spotify</a>
-      : <button onClick={logout}>Logout</button>}
 
-  </>;
+      </>)
+      
 }
 
 export default LoginPage;

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useSound from 'use-sound';
 
-import playIcon from './icons/play.png';
+import playIcon from './icons/play.svg';
 import pauseIcon from './icons/pause.png';
 
 

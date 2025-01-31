@@ -22,10 +22,10 @@ export default function Gameover({targetSong, targetPlaylist,  userDict, songDic
                 <img style={{ height: "40vh" }} src={targetSong.current.imgUrl} alt='albumCover' />
                 <h3>{targetSong.current.name}</h3>
 
-                <h4 style={{ justifyContent: "center", alignItems: "center" }} >Added by <a href={userDict[targetSong.current.addedBy].profileUrl} target="_blank" ><img style={{ height: "25px", width: "25px", borderRadius: "15px" }} src={userDict[targetSong.current.addedBy].url} alt='spotifyProfileImg' /> <b>{userDict[targetSong.current.addedBy].name}</b></a>  to
+                <h4 style={{lineHeight:"2"}}>Added by <a href={userDict[targetSong.current.addedBy].profileUrl} target="_blank" className="addedByBadge"><img style={{ height: "25px", width: "25px", borderRadius: "15px" }} src={userDict[targetSong.current.addedBy].url} alt='spotifyProfileImg' /> <b>{userDict[targetSong.current.addedBy].name}</b></a> to
 
-                    <br /> <a href={songDict[targetPlaylist.current].playlistUrl} target="_blank" ><img style={{ height: "25px", width: "25px", borderRadius: "2px" }} src={songDict[targetPlaylist.current].url} alt='spotifyPlaylistImg' /> <b>{targetPlaylist.current}</b></a></h4>
-
+                    <br /> <a href={songDict[targetPlaylist.current].playlistUrl} target="_blank" className="addedByBadge"><img style={{ height: "20px", width: "20px", borderRadius: "2px" }} src={songDict[targetPlaylist.current].url} alt='spotifyPlaylistImg' /> <b>{targetPlaylist.current}</b></a>
+                    </h4>
 
             </div>
 
