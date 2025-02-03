@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 
 export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong }) {
     const [isDropped, setIsDropped] = useState(false);
+    const playlistMenuRef = useRef(null);
 
     function setFixedPlaylist(key) {
         fixedPlaylist.current = key;
@@ -11,8 +12,16 @@ export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong 
         chooseNewSong();
     }
 
+    const closeDropdown = (e)=>{
+        if(isDropped && !playlistMenuRef.current?.contains(e.target)){
+          setIsDropped(false)
+        }
+    }
+
+    document.addEventListener('mousedown',closeDropdown)
+
     return (
-        <div style={{position:"relative"}}>
+        <div ref = {playlistMenuRef} style={{position:"relative"}}>
 
             {isDropped &&
                 <div className='playlistSearchDropdown'>

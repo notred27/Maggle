@@ -1,4 +1,4 @@
-:root{
+:root {
   --page-background-color: #3d2929;
   --secondary-background-color: #120101;
 
@@ -12,6 +12,9 @@
 
 
   --dull-accent-color: #693e3e;
+
+
+
 }
 
 
@@ -24,10 +27,11 @@
   --primary-btn-color: #931111;
   --secondary-btn-color: #764242;
   --dull-accent-color: #693e3e;
+
 }
 
 [data-theme="purple"] {
---page-background-color: #1b191f;
+  --page-background-color: #1b191f;
   --secondary-background-color: #111118;
   --primary-text-color: #fffff0;
   --secondary-text-color: #000000;
@@ -35,10 +39,11 @@
   --primary-btn-color: #681193;
   --secondary-btn-color: #644276;
   --dull-accent-color: #5b4d62;
+
 }
 
 [data-theme="blue"] {
---page-background-color: #1a1a24;
+  --page-background-color: #1a1a24;
   --secondary-background-color: #111118;
   --primary-text-color: #fffff0;
   --secondary-text-color: #000000;
@@ -46,18 +51,20 @@
   --primary-btn-color: #112d93;
   --secondary-btn-color: #424d76;
   --dull-accent-color: #4d5162;
+
 }
 
 [data-theme="green"] {
   --page-background-color: #191a19;
-    --secondary-background-color: #0d0f0d;
-    --primary-text-color: #fffff0;
-    --secondary-text-color: #000000;
-    --primary-hover-color: #c2c2c2;
-    --primary-btn-color: #119329;
-    --secondary-btn-color: #42764c;
-    --dull-accent-color: #4e624d;
-  }
+  --secondary-background-color: #0d0f0d;
+  --primary-text-color: #fffff0;
+  --secondary-text-color: #000000;
+  --primary-hover-color: #c2c2c2;
+  --primary-btn-color: #119329;
+  --secondary-btn-color: #42764c;
+  --dull-accent-color: #4e624d;
+
+}
 
 
 
@@ -67,24 +74,26 @@
   grid-template-rows: fit-content 2fr fit-content;
   height: 100vh;
   transition: background-color 1s ease, color 1s ease;
-   background-color: var(--page-background-color);
+  background-color: var(--page-background-color);
   color: var(--primary-text-color);
+
 }
 
 
-.searchBarItem{
+.searchBarItem {
   width: 100%;
   color: var(--secondary-text-color);
   padding: 2px;
   font-weight: 500;
 
 }
-.searchBarItem:hover{
+
+.searchBarItem:hover {
   background-color: var(--primary-hover-color);
 }
 
 
-.searchInput{
+.searchInput {
   width: 40vw;
   height: 2em;
 }
@@ -92,7 +101,7 @@
 
 
 
-.appHeader{
+.appHeader {
   position: fixed;
   top: 0;
   display: flex;
@@ -105,7 +114,7 @@
 }
 
 .appHeader h1 {
-  font-size:xx-large;
+  font-size: xx-large;
 }
 
 .profileBadge {
@@ -120,7 +129,7 @@
 
 }
 
-.profileBadge img{
+.profileBadge img {
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -133,7 +142,7 @@
 
 .middleElem {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
 }
@@ -150,7 +159,7 @@
   justify-content:space-evenly; */
   /* margin-top: 10vh;
   margin-bottom: 5vh; */
- 
+
 
 }
 
@@ -173,20 +182,33 @@
 
 
 .dropdownContent {
-  display: none;
+  /* display: none; */
   position: absolute;
+  top: 60px;
   background-color: var(--dull-accent-color);
   padding: 10px;
+  border-radius: 5px;
 }
 
-.dropdownContent h4{
+.dropdownContent h4 {
+  margin-top: 5px;
   margin-bottom: 5px;
   text-decoration: underline;
   text-align: left;
 }
 
-.dropdownMenu:hover .dropdownContent {
-  display: block;
+.dropdownContent input {
+  width: 130px;
+}
+
+.dropdownMenu {
+  position: relative;
+}
+
+#dropImg{
+  border-radius: 0px;
+  width: 15px;
+  height: 15px;
 }
 
 
@@ -204,14 +226,14 @@
   padding-bottom: 20px;
 }
 
-.guessControlContainer > div{
+.guessControlContainer>div {
   margin-left: auto;
   margin-right: auto;
 
   width: fit-content;
-
-
 }
+
+
 
 
 .gameoverContainer {
@@ -229,12 +251,12 @@
 
 
 .gameoverInfo {
-   width: 30vw;
-   height: 60vh;
-   display: flex;
-   flex-direction: column;
-   justify-content: space-evenly;
-   align-items: center;
+  width: 30vw;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 
 }
 
@@ -269,20 +291,20 @@
 
 
 .guessTile span {
- display: none;
- position: absolute;
- bottom: 22px;
- left: -75px;
- width: 200px;
- font-size: smaller;
+  display: none;
+  position: absolute;
+  bottom: 22px;
+  left: -75px;
+  width: 200px;
+  font-size: smaller;
 }
 
 .guessTile:hover span {
   display: block;
- }
- 
+}
 
- #retryBtn {
+
+#retryBtn {
   background-color: var(--primary-btn-color);
   color: var(--primary-text-color);
   border: none;
@@ -293,7 +315,7 @@
 }
 
 
-.playlistToggleItem{
+.playlistToggleItem {
   width: 200px;
   padding: 4px;
   justify-content: center;
@@ -301,11 +323,11 @@
   border-radius: 4px;
 }
 
-.playlistToggleItem:hover{
+.playlistToggleItem:hover {
   background-color: var(--primary-hover-color);
 }
 
-.playlistToggleItem img{
+.playlistToggleItem img {
   width: 1em;
   height: 1em;
 }
@@ -318,33 +340,33 @@
   background-color: black;
 }
 
-.theme-options{
+.theme-options {
   display: flex;
-  gap:10px;
+  gap: 10px;
 }
 
 
 
-.theme-option{
-  height:25px;
-  width:25px;
+.theme-option {
+  height: 25px;
+  width: 25px;
   cursor: pointer;
   border-radius: 15px;
 }
 
-#theme-purple{
+#theme-purple {
   background-color: purple;
 }
 
-#theme-red{
+#theme-red {
   background-color: red;
 }
 
-#theme-blue{
+#theme-blue {
   background-color: blue;
 }
 
-#theme-green{
+#theme-green {
   background-color: green;
 }
 
@@ -361,3 +383,47 @@
   gap: 5px;
 }
 
+#trackProgress {
+  overflow: hidden;
+  width: 40vw;
+  border: 2px solid var(--secondary-btn-color);
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  border-radius: 5px;
+  background: var(--dynamic-grad);
+  outline: none;
+  margin-top: 15px;
+}
+
+
+#trackProgress::-moz-range-progress {
+  background-color: var(--primary-btn-color);
+  height: 100%;
+}
+
+
+#trackProgress::-webkit-slider-thumb {
+  width: 0px;
+  -webkit-appearance: none;
+  height: 100%;
+  cursor: ew-resize;
+  box-shadow: -20vw 0 0 20vw var(--primary-btn-color);
+}
+
+
+#trackProgress::-moz-range-thumb{
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}

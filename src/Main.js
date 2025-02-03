@@ -1,16 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
 import SearchBar from './SearchBar';
-import { useNavigate } from 'react-router-dom';
 import PlayButton from './PlayButton';
-import speakerIcon from './icons/speaker-icon.png'
 import Gameover from './Gameover';
 import PlaylistSelect from './PlaylistSelect';
-import ThemeOption from './ThemeOption';
+import ProfileBadge from './ProfileBadge.js'
 
 
 export default function Main() {
-  const nav = useNavigate();
   const [profile, setProfile] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const submit_ref = useRef(null);
@@ -31,7 +28,7 @@ export default function Main() {
   const [maxPlaybackLength, setMaxPlaybackLength] = useState(1000);
 
 
-
+  const [pbarValue, setPbarValue] = useState(0);
 
   const [gameOver, setGameOver] = useState(false);
 
@@ -42,9 +39,6 @@ export default function Main() {
   const [score, setScore] = useState(0);
 
 
-  function changeVolume(e) {
-    setVolume(e.target.value); // Set volume from slider value (0-1)
-  };
 
   useEffect(() => {
     getProfile();
@@ -61,7 +55,7 @@ export default function Main() {
 
 
   useEffect(() => {
-    chooseNewSong()
+    chooseNewSong();
   }, [searchItems])
 
 
@@ -77,9 +71,7 @@ export default function Main() {
       }
     }
 
-
-
-  }, [gameOver])
+  }, [gameOver, guesses])
 
 
   useEffect(() => {
@@ -90,9 +82,49 @@ export default function Main() {
     }
   }, [score])
 
+
+
+  const updateDynamicGradient = () => {
+
+    const computedStyles = getComputedStyle(document.querySelector('body'));
+  
+    const dullAccent = computedStyles.getPropertyValue("--dull-accent-color").trim();
+    const secondaryBtn = computedStyles.getPropertyValue("--secondary-btn-color").trim();
+    const pageBg = computedStyles.getPropertyValue("--page-background-color").trim();
+    
+
+    let gradient = `linear-gradient(to right, ${dullAccent} 0% 6%, `;
+
+    let lastPercent = 6.25;
+    for(let i = 0; i < 4; i++){
+      gradient += `${secondaryBtn} ${lastPercent}% calc(${lastPercent}% + 2px),`
+      let dynamicColor = i < guesses.length ? dullAccent : pageBg;
+      gradient += `${dynamicColor} calc(${lastPercent}% + 2px) ${lastPercent + lastPercent}%, `;
+      lastPercent += lastPercent
+    }
+
+      document.documentElement.style.setProperty("--dynamic-grad", `${gradient.substring(0, gradient.length - 2)})`);
+  }
+
+
+  useEffect(() => {
+    updateDynamicGradient();
+  }, [guesses]); 
+
+
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => updateDynamicGradient());
+    observer.observe(document.querySelector('body'), { attributes: true, attributeFilter: ["data-theme"] });
+  
+    return () => observer.disconnect();
+  });
+
+  
   async function chooseNewSong() {
     setGameOver(false);
     setMaxPlaybackLength(1000);
+    setPbarValue(0);
 
     const playlistKeys = Object.keys(songDict);
 
@@ -135,14 +167,7 @@ export default function Main() {
 
   }
 
-  function logout() {
-    // window.localStorage.removeItem("access_token");
-    // window.localStorage.removeItem("refresh_token");
-    window.localStorage.removeItem("token")
-
-    nav("/");
-  }
-
+ 
 
 
   async function getProfile() {
@@ -271,13 +296,13 @@ export default function Main() {
   }
 
 
-  let z = [];
+  let renderedGuesses = [];
 
   for (let i = 0; i < 5; i++) {
     if (i < guesses.length) {
-      z.push(<h4 className='guessText' style={{ color: `${guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red"}` }}>{guesses[i]}</h4>)
+      renderedGuesses.push(<h4 className='guessText' style={{ color: `${guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red"}` }}>{guesses[i]}</h4>)
     } else {
-      z.push(<h4 className='guessText'>&nbsp;</h4>)
+      renderedGuesses.push(<h4 className='guessText'>&nbsp;</h4>)
     }
   }
 
@@ -285,77 +310,38 @@ export default function Main() {
     <div className="App">
 
       <header className='appHeader'>
-        {profile !== null && <>
           <span className='streakText'>
             Current Streak: {score}
-
             <br />
             Best Streak: {bestScore}
           </span>
 
-          <h1>Maggle!</h1>
+          <h1 className='noselect'>Maggle!</h1>
 
-
-          <span className='dropdownMenu'>
-            <span className='profileBadge'>
-              <img src={profile.images[1].url} alt='spotifyProfileImg' />
-              <h3>{profile.display_name}</h3>
-            </span>
-
-            <div className='dropdownContent'>
-
-              <h4>Audio</h4>
-              <img src={speakerIcon} alt='speaker' style={{ width: "20px" }} />
-              <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
-              <br />
-              
-              <h4>Theme</h4>
-              <div className='theme-options'>
-                <ThemeOption theme={"red"} />
-                <ThemeOption theme={"purple"} />
-                <ThemeOption theme={"blue"} />
-                <ThemeOption theme={"green"} />
-
-
-
-              </div>
-
-              <h4>Log Out</h4>
-              <button onClick={logout}>Logout</button>
-            </div>
-          </span>
-        </>
-
-        }
-
+          {profile !== null && 
+            <ProfileBadge profileUrl={profile.images[1].url} displayName={profile.display_name} volume={volume} setVolume={setVolume}/>
+          }
       </header>
 
 
 
       {!gameOver &&
-      // <div className='middleElem'>
-
-
         <div className='guessContainer' >
-
-          {z}
-
+          {renderedGuesses}
         </div>
-
-        // </div>
-
       }
 
 
       {!gameOver &&
         <div className='guessControlContainer'>
+
+          <input id='trackProgress' type='range'  value={pbarValue} min={0} max={1600} step={1}  disabled />
           <div>
 
-
             <span className='submissionBar'>
-              <span>0:00</span>
-              <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} />
-              <span>0:{String(maxPlaybackLength / 1000).padStart(2, '0')}</span>
+              <span className='noselect'>0:{String(Math.floor(pbarValue / 100 + 0.1)).padStart(2, '0')}</span>
+              <PlayButton audioUrl={audioUrl} volume={volume} maxPlaybackLength={maxPlaybackLength} inputVal={setPbarValue}/>
+              <span className='noselect'>0:{String(maxPlaybackLength / 1000).padStart(2, '0')}</span>
             </span>
 
             <SearchBar searchRef={submit_ref} items={searchItems} />
@@ -372,11 +358,7 @@ export default function Main() {
         </div>
       }
 
-      {gameOver &&
-        <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={guesses} chooseNewSong={chooseNewSong} gameOver={gameOver} volume={volume} audio={audioUrl}>
-
-        </Gameover>
-      }
+      {gameOver &&  <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={guesses} chooseNewSong={chooseNewSong} gameOver={gameOver} volume={volume} audio={audioUrl} />}
     </div>
   );
 }

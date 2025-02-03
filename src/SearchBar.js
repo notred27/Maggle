@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import SearchBarEntry from "./SearchBarEntry";
 
 
 export default function SearchBar({ searchRef, items }) {
     const [filter, setFilter] = useState("");
+
+    const menuRef = useRef(null)
+
+    const closeDropdown = (e)=>{
+        if(filter != "" && !menuRef.current?.contains(e.target)){
+          setFilter("")
+        }
+    }
+
+    document.addEventListener('mousedown',closeDropdown)
 
 
 
@@ -34,7 +44,7 @@ export default function SearchBar({ searchRef, items }) {
 
 
     return (
-        <div style={{ position: "relative" }}>
+        <div ref={menuRef} style={{ position: "relative" }}>
 
             <div style={{ position: "absolute", left:"10px", bottom: "30px", backgroundColor: "white", width: "40vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius:"5px" }}>
                 {filter !== "" && searchRef.current === document.activeElement && rows}
