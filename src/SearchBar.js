@@ -8,7 +8,7 @@ export default function SearchBar({ searchRef, items }) {
     const menuRef = useRef(null)
 
     const closeDropdown = (e)=>{
-        if(filter != "" && !menuRef.current?.contains(e.target)){
+        if(filter !== "" && !menuRef.current?.contains(e.target)){
           setFilter("")
         }
     }
@@ -31,13 +31,13 @@ export default function SearchBar({ searchRef, items }) {
 
     let rows = []
 
-    items.forEach((i) => {
+    items.forEach((i, idx) => {
         if (i.toLowerCase().indexOf(filter.toLowerCase()) === -1) {
             return;
         }
 
         if (rows.length < 10) {
-            rows.push(<SearchBarEntry value={i} setText={setText} />)
+            rows.push(<SearchBarEntry key={`songSearchItem${idx}`} value={i} setText={setText} />)
 
         }
     })

@@ -60,7 +60,6 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
         if (!isPlaying) return;
 
         const updateProgress = () => {
-            console.log(sound.seek())
             inputVal(sound.seek() * 100) ;
         };
 
@@ -73,10 +72,10 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
     return (
         <>
             {!isPlaying ?
-                <img src={playIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
+                <img alt='playAudio' src={playIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
 
                 :
-                <img src={pauseIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
+                <img alt='pauseAudio' src={pauseIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
 
             }
         </>

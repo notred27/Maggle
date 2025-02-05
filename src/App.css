@@ -85,6 +85,8 @@
   color: var(--secondary-text-color);
   padding: 2px;
   font-weight: 500;
+  cursor: pointer;
+
 
 }
 
@@ -111,6 +113,8 @@
   width: 100vw;
   height: fit-content;
   background-color: var(--secondary-background-color);
+  transition: background-color 1s ease, color 1s ease;
+
 }
 
 .appHeader h1 {
@@ -224,6 +228,8 @@
   bottom: 0;
   background-color: var(--secondary-background-color);
   padding-bottom: 20px;
+  transition: background-color 1s ease, color 1s ease;
+
 }
 
 .guessControlContainer>div {
@@ -321,6 +327,8 @@
   justify-content: center;
   background-color: black;
   border-radius: 4px;
+  cursor: pointer;
+
 }
 
 .playlistToggleItem:hover {
