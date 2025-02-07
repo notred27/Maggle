@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import SearchBarEntry from "./SearchBarEntry";
 
 
 export default function SearchBar({ searchRef, items }) {
@@ -7,13 +6,13 @@ export default function SearchBar({ searchRef, items }) {
 
     const menuRef = useRef(null)
 
-    const closeDropdown = (e)=>{
-        if(filter !== "" && !menuRef.current?.contains(e.target)){
-          setFilter("")
+    const closeDropdown = (e) => {
+        if (filter !== "" && !menuRef.current?.contains(e.target)) {
+            setFilter("")
         }
     }
 
-    document.addEventListener('mousedown',closeDropdown)
+    document.addEventListener('mousedown', closeDropdown)
 
 
 
@@ -37,8 +36,11 @@ export default function SearchBar({ searchRef, items }) {
         }
 
         if (rows.length < 10) {
-            rows.push(<SearchBarEntry key={`songSearchItem${idx}`} value={i} setText={setText} />)
-
+            rows.push(
+                <div key={`songSearchItem${idx}`} className="searchBarItem" onClick={() => setText(i)}>
+                    {i}
+                </div>
+            )
         }
     })
 
@@ -46,7 +48,7 @@ export default function SearchBar({ searchRef, items }) {
     return (
         <div ref={menuRef} style={{ position: "relative" }}>
 
-            <div style={{ position: "absolute", left:"10px", bottom: "30px", backgroundColor: "white", width: "40vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius:"5px" }}>
+            <div style={{ position: "absolute", left: "10px", bottom: "30px", backgroundColor: "white", width: "40vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius: "5px" }}>
                 {filter !== "" && searchRef.current === document.activeElement && rows}
             </div>
 

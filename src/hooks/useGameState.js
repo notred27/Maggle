@@ -70,6 +70,19 @@ export default function useGameState(songDict) {
     }
 
     const tracks = await response.json();
+
+    if(!query.name.toLowerCase().includes(tracks.data[0].title_short.toLowerCase())){
+      console.error("Best result does not match target song. Skipping this song: ", query.name)
+      return null;
+    }
+
+    if(tracks.data.length === 0) {
+      console.error("No results were found. Skipping this song: ", query.name);
+      return null;
+    
+    }
+
+
     console.log(tracks.data[0])
 
     return tracks.data[0].preview;
@@ -89,6 +102,13 @@ export default function useGameState(songDict) {
       targetSong.current = songDict[newPlaylist].songs[Math.floor(Math.random() * songDict[newPlaylist].songs.length)];
 
       const previewUrl = await getAudioPreview(targetSong.current);
+
+      // If preview is null, need to find a new song
+      if(previewUrl === null) {
+        chooseNewSong();
+        return;
+      }
+
 
       setGameState(prev => ({
         ...prev,

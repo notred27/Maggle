@@ -1,0 +1,91 @@
+:root {
+    --page-background-color: #3d2929;
+    --secondary-background-color: #120101;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #931111;
+    --secondary-btn-color: #764242;
+    --dull-accent-color: #693e3e;
+}
+
+/* Theme color variables */
+
+[data-theme="red"] {
+    --page-background-color: #231212;
+    --secondary-background-color: #120101;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #931111;
+    --secondary-btn-color: #764242;
+    --dull-accent-color: #693e3e;
+
+}
+
+[data-theme="purple"] {
+    --page-background-color: #1b191f;
+    --secondary-background-color: #111118;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #681193;
+    --secondary-btn-color: #644276;
+    --dull-accent-color: #5b4d62;
+
+}
+
+[data-theme="blue"] {
+    --page-background-color: #1a1a24;
+    --secondary-background-color: #111118;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #112d93;
+    --secondary-btn-color: #424d76;
+    --dull-accent-color: #4d5162;
+
+}
+
+[data-theme="green"] {
+    --page-background-color: #191a19;
+    --secondary-background-color: #0d0f0d;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #119329;
+    --secondary-btn-color: #42764c;
+    --dull-accent-color: #4e624d;
+
+}
+
+/* Styles for theme icons in app */
+
+.theme-options {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-option {
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+
+#theme-purple {
+    background-color: purple;
+}
+
+#theme-red {
+    background-color: red;
+}
+
+#theme-blue {
+    background-color: blue;
+}
+
+#theme-green {
+    background-color: green;
+}

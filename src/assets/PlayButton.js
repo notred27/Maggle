@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import useSound from 'use-sound';
 
-import playIcon from './icons/play.svg';
-import pauseIcon from './icons/pause.svg';
+import playIcon from './../icons/play.svg';
+import pauseIcon from './../icons/pause.svg';
 
 
 export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputVal }) {

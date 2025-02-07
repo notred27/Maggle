@@ -1,73 +1,3 @@
-:root {
-  --page-background-color: #3d2929;
-  --secondary-background-color: #120101;
-
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-
-  --primary-hover-color: #c2c2c2;
-
-  --primary-btn-color: #931111;
-  --secondary-btn-color: #764242;
-
-
-  --dull-accent-color: #693e3e;
-
-
-
-}
-
-
-[data-theme="red"] {
-  --page-background-color: #231212;
-  --secondary-background-color: #120101;
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-  --primary-hover-color: #c2c2c2;
-  --primary-btn-color: #931111;
-  --secondary-btn-color: #764242;
-  --dull-accent-color: #693e3e;
-
-}
-
-[data-theme="purple"] {
-  --page-background-color: #1b191f;
-  --secondary-background-color: #111118;
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-  --primary-hover-color: #c2c2c2;
-  --primary-btn-color: #681193;
-  --secondary-btn-color: #644276;
-  --dull-accent-color: #5b4d62;
-
-}
-
-[data-theme="blue"] {
-  --page-background-color: #1a1a24;
-  --secondary-background-color: #111118;
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-  --primary-hover-color: #c2c2c2;
-  --primary-btn-color: #112d93;
-  --secondary-btn-color: #424d76;
-  --dull-accent-color: #4d5162;
-
-}
-
-[data-theme="green"] {
-  --page-background-color: #191a19;
-  --secondary-background-color: #0d0f0d;
-  --primary-text-color: #fffff0;
-  --secondary-text-color: #000000;
-  --primary-hover-color: #c2c2c2;
-  --primary-btn-color: #119329;
-  --secondary-btn-color: #42764c;
-  --dull-accent-color: #4e624d;
-
-}
-
-
-
 .App {
   text-align: center;
   display: grid;
@@ -76,7 +6,6 @@
   transition: background-color 1s ease, color 1s ease;
   background-color: var(--page-background-color);
   color: var(--primary-text-color);
-
 }
 
 
@@ -86,8 +15,6 @@
   padding: 2px;
   font-weight: 500;
   cursor: pointer;
-
-
 }
 
 .searchBarItem:hover {
@@ -155,16 +82,7 @@
   margin-top: 20vh;
   margin-left: auto;
   margin-right: auto;
-  /* min-height: 14em; */
   height: fit-content;
-
-  /* display: flex;
-  flex-direction: column;
-  justify-content:space-evenly; */
-  /* margin-top: 10vh;
-  margin-bottom: 5vh; */
-
-
 }
 
 .guessText {
@@ -209,7 +127,7 @@
   position: relative;
 }
 
-#dropImg{
+#dropImg {
   border-radius: 0px;
   width: 15px;
   height: 15px;
@@ -250,10 +168,6 @@
   margin-top: 20vh;
 }
 
-
-/* .gameoverContainer div{
-  justify-content: center;
-} */
 
 
 .gameoverInfo {
@@ -348,35 +262,7 @@
   background-color: black;
 }
 
-.theme-options {
-  display: flex;
-  gap: 10px;
-}
 
-
-
-.theme-option {
-  height: 25px;
-  width: 25px;
-  cursor: pointer;
-  border-radius: 15px;
-}
-
-#theme-purple {
-  background-color: purple;
-}
-
-#theme-red {
-  background-color: red;
-}
-
-#theme-blue {
-  background-color: blue;
-}
-
-#theme-green {
-  background-color: green;
-}
 
 .addedByBadge {
   background-color: var(--dull-accent-color);
@@ -420,18 +306,7 @@
 }
 
 
-#trackProgress::-moz-range-thumb{
+#trackProgress::-moz-range-thumb {
   opacity: 0;
   pointer-events: none;
-}
-
-
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
 }

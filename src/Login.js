@@ -1,47 +1,57 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-
 function LoginPage() {
-  
-  const [token, setToken] = useState("")
+  const [token, setToken] = useState("");
   const nav = useNavigate();
 
-  const CLIENT_ID = "8fd502b5eb924a4187198525df2b4709"
-  // const REDIRECT_URI = "http://localhost:3000"
-  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/"
-  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
-  const RESPONSE_TYPE = "token"
+  const CLIENT_ID = "fc40b34070264f1185c0ac9429b3f8c6";
+  // const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
+  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/";   // Deployment redirect
+  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
+  const RESPONSE_TYPE = "token";
 
+
+  /**
+   * After redirect, try to extract and save the response token if auth was successful
+   */
   useEffect(() => {
-    const hash = window.location.hash
-    let token = window.localStorage.getItem("token")
+    const hash = window.location.hash;
+    let token = window.localStorage.getItem("token");
+
+    console.log("Hash:", hash); // Debugging line
 
     if (!token && hash) {
-      token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
+      const tokenMatch = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"));
+      if (tokenMatch) {
+        token = tokenMatch.split("=")[1];
+        window.location.hash = ""; // Clear the hash from URL
+        window.localStorage.setItem("token", token);
 
-      window.location.hash = ""
-      window.localStorage.setItem("token", token)
-      nav("/home");
-
+        // Create function to remove the token if the page is closed before the user logs out
+        window.addEventListener('beforeunload', () => {
+          localStorage.removeItem('token');
+        });
+      }
     }
 
-    setToken(token)
+    if (token) {
+      setToken(token); 
+      nav("/");
+    }
+  }, [nav, setToken]);
 
-
-  }, [nav])
-
-
+  /**
+   * Clear the token
+   */
   const logout = () => {
-    setToken("")
-    window.localStorage.removeItem("token")
+    setToken("");
+    window.localStorage.removeItem("token");
   }
 
 
 
   return (<>
-
     {!token ?
       <>
         <div>
@@ -58,7 +68,6 @@ function LoginPage() {
         <h1>An error occurred. Please ensure that you log out.</h1>
         <button onClick={logout}>Logout</button>
       </>}
-
   </>);
 
 

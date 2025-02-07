@@ -1,10 +1,10 @@
 
 import { useRef, useState } from 'react';
-import ThemeOption from './ThemeOption';
+import ThemeOption from './ThemeOption.js';
 import { useNavigate } from 'react-router-dom';
 
-import darrow from './icons/down.svg';
-import uarrow from './icons/up.svg';
+import darrow from './../icons/down.svg';
+import uarrow from './../icons/up.svg';
 
 
 export default function ProfileBadge({profileUrl, displayName, volume, setVolume}) {
@@ -18,10 +18,8 @@ export default function ProfileBadge({profileUrl, displayName, volume, setVolume
     }
     
     function logout() {
-        // window.localStorage.removeItem("access_token");
-        // window.localStorage.removeItem("refresh_token");
         window.localStorage.removeItem("token")
-        nav("/");
+        nav("/login");
     }
 
 

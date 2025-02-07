@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import './App.css';
-import SearchBar from './SearchBar';
-import PlayButton from './PlayButton';
+import SearchBar from './assets/SearchBar.js';
+import PlayButton from './assets/PlayButton.js';
 import Gameover from './Gameover';
-import PlaylistSelect from './PlaylistSelect';
-import ProfileBadge from './ProfileBadge.js'
+import PlaylistSelect from './assets/PlaylistSelect.js';
+import ProfileBadge from './assets/ProfileBadge.js'
 
 
 import usePlaylists from './hooks/usePlaylists.js';
 import useGameState from './hooks/useGameState.js';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Main() {
@@ -24,6 +24,22 @@ export default function Main() {
 
   const [loading, setLoading] = useState(true);
 
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const accessToken = window.localStorage.getItem('token');
+
+    if (!accessToken) {
+      nav('/login'); // Redirect if no token
+      // console.log("Error??")
+      return;
+    }
+
+    async function fetchData() {
+      await getProfile();
+    }
+    fetchData();
+  }, [nav]);
 
 
   const updateDynamicGradient = useCallback(() => {
@@ -58,12 +74,12 @@ export default function Main() {
 
 
 
-  useEffect(() => {
-    async function fetchData() {
-      await getProfile();
-    }
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     await getProfile();
+  //   }
+  //   fetchData();
+  // }, []);
 
 
   useEffect(() => {
@@ -155,7 +171,6 @@ export default function Main() {
                   inputVal={setPbarValue}
                 />
               )}
-              {/* <PlayButton audioUrl={gameState.audioUrl} volume={volume} maxPlaybackLength={gameState.maxPlaybackLength} inputVal={setPbarValue} /> */}
 
 
               <span className='noselect'>0:{String(gameState.maxPlaybackLength / 1000).padStart(2, '0')}</span>
