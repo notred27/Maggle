@@ -59,6 +59,18 @@
 
 }
 
+[data-theme="heardle"] {
+    --page-background-color: #191a19;
+    --secondary-background-color: #0d0f0d;
+    --primary-text-color: #fffff0;
+    --secondary-text-color: #000000;
+    --primary-hover-color: #c2c2c2;
+    --primary-btn-color: #119329;
+    --secondary-btn-color: #414141;
+    --dull-accent-color: #585858;
+
+}
+
 /* Styles for theme icons in app */
 
 .theme-options {
@@ -88,4 +100,8 @@
 
 #theme-green {
     background-color: green;
+}
+
+#theme-heardle {
+    background-color: rgb(0, 17, 0);
 }

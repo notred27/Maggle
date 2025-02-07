@@ -8,7 +8,12 @@ export default function usePlaylists(profile) {
   const [userDict, setUserDict] = useState({});
 
 
-  
+  /**
+   * Query Spotify's API for a list of different users
+   * @param {*} userSet List of Spotify usernames
+   * @param {*} accessToken API access token
+   * @returns A dictionary with user names as keys containing names, profile links, and user image links
+   */
   async function getUserInfo(userSet, accessToken) {
     const tmpUserDict = {};
     await Promise.all([...userSet].map(async (username) => {
@@ -28,14 +33,17 @@ export default function usePlaylists(profile) {
   }
 
 
+  /**
+   * Construct a dictionary of the user's playlists that contains info about their songs,
+   * and who added the songs to those playlists. Also populates userDict.
+   */
   const getPlaylists = useCallback(async () => {
-    const songs = new Set();
     const accessToken = window.localStorage.getItem("token");
 
-    const userSet = new Set()
-    const playlistDict = {}
+    const songs = new Set();   // Ensure each song is only added as a search key once
+    const userSet = new Set(); // Ensure only one object is created for each unique Spotify profile
+    const playlistDict = {};   // Dictionary of playlists by their names
 
-    
 
     const response = await fetch(`https://api.spotify.com/v1/users/${profile.id}/playlists`, {
       headers: {
@@ -63,8 +71,8 @@ export default function usePlaylists(profile) {
 
       const playlistSongs = await songList.json();
 
+      // Get info about each song on this playlist
       playlistSongs.items.forEach((s) => {
-        // console.log(s.added_by.id)
         const artists = s.track.artists.map((x) => x.name).join(", ");
         try {
           playlistDict[p.name].songs.push({ name: `${s.track.name} - ${artists}`, imgUrl: s.track.album.images[1]?.url || null, addedBy: s.added_by.id })

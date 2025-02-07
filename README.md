@@ -14,6 +14,6 @@
 - [x] Format dropdown menu for profile badge
 - [x] Split logic into components
 - [ ] Organize CSS files, and ensure that there are no inline styles
-- [ ] more responses for game over screen
+- [x] more responses for game over screen
 - [ ] Create hist of guess times (e.g., how many times user guessed the song in 1 second, 2, ...) 
 - [ ] Average time to listen before correct answer?

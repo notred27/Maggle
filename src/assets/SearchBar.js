@@ -3,59 +3,48 @@ import { useState, useRef } from "react";
 
 export default function SearchBar({ searchRef, items }) {
     const [filter, setFilter] = useState("");
+    const menuRef = useRef(null);
 
-    const menuRef = useRef(null)
-
+    /**
+     * Close the popup menu if another HTML element is clicked.
+     * @param {*} e HTML event
+     */
     const closeDropdown = (e) => {
         if (filter !== "" && !menuRef.current?.contains(e.target)) {
-            setFilter("")
+            setFilter("");
         }
     }
-
-    document.addEventListener('mousedown', closeDropdown)
-
+    document.addEventListener('mousedown', closeDropdown);
 
 
-    function updateFilter() {
-        setFilter(searchRef.current.value);
-    }
 
-
+    /**
+     * If a search item is clicked, set the searchbar's value to it.
+     * @param {*} val A string of the format "[song title] - [artist]"
+     */
     function setText(val) {
         searchRef.current.value = val;
         setFilter(val);
-
-
     }
 
-    let rows = []
 
-    items.forEach((i, idx) => {
-        if (i.toLowerCase().indexOf(filter.toLowerCase()) === -1) {
-            return;
-        }
-
-        if (rows.length < 10) {
-            rows.push(
-                <div key={`songSearchItem${idx}`} className="searchBarItem" onClick={() => setText(i)}>
-                    {i}
-                </div>
-            )
-        }
-    })
+    // Find the first 10 items that match the user's current search and display them
+    const rows = items
+    .filter(i => i.toLowerCase().includes(filter.toLowerCase())) // Match filter
+    .slice(0, 10) // For first 10 items
+    .map((i, idx) => (  //Create display objects
+      <div key={`songSearchItem${idx}`} className="searchBarItem" onClick={() => setText(i)}>{i}</div>
+    ));
 
 
     return (
         <div ref={menuRef} style={{ position: "relative" }}>
 
-            <div style={{ position: "absolute", left: "10px", bottom: "30px", backgroundColor: "white", width: "40vw", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius: "5px" }}>
+            <div className="songSearchItem">
                 {filter !== "" && searchRef.current === document.activeElement && rows}
             </div>
 
-
-            <input className="searchInput" ref={searchRef} onChange={updateFilter} placeholder="Search for the song!" />
-
-
+            <input className="searchInput" ref={searchRef} onChange={() => setFilter(searchRef.current.value)} placeholder="Search for the song!" />
         </div>
     )
 }

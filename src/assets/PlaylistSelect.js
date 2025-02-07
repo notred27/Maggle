@@ -5,23 +5,31 @@ export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong 
     const [isDropped, setIsDropped] = useState(false);
     const playlistMenuRef = useRef(null);
 
+    /**
+     * Select a playlist to choose songs from. Also selects a new song after it's triggered.
+     * @param {*} key The name of the playlist, or 'null' for all songs
+     */
     function setFixedPlaylist(key) {
         fixedPlaylist.current = key;
-        console.log(fixedPlaylist.current);
         setIsDropped(false);
         chooseNewSong();
     }
 
-    const closeDropdown = (e)=>{
-        if(isDropped && !playlistMenuRef.current?.contains(e.target)){
-          setIsDropped(false)
+    /**
+     * Close the popup menu if another HTML element is clicked.
+     * @param {*} e HTML event
+     */
+    const closeDropdown = (e) => {
+        if (isDropped && !playlistMenuRef.current?.contains(e.target)) {
+            setIsDropped(false);
         }
     }
 
-    document.addEventListener('mousedown',closeDropdown)
+    // Trigger a popup check every time the mouse is clicked.
+    document.addEventListener('mousedown', closeDropdown);
 
     return (
-        <div ref = {playlistMenuRef} style={{position:"relative"}}>
+        <div ref={playlistMenuRef} style={{ position: "relative" }}>
 
             {isDropped &&
                 <div className='playlistSearchDropdown'>
@@ -29,14 +37,15 @@ export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong 
                     {Object.keys(songDict).map((k) => {
                         return <div className='playlistToggleItem' onClick={() => setFixedPlaylist(k)}><img src={songDict[k].url} alt="playlistIcon" />&nbsp;{k}</div>
                     })}
-
                 </div>
             }
 
-            <span onClick={() => setIsDropped((prev) => !prev)}>{fixedPlaylist.current !== null ? <div className='playlistToggleItem'><img src={songDict[fixedPlaylist.current].url} alt="playlistIcon" /> <b>{fixedPlaylist.current}</b></div> : <div className='playlistToggleItem'><b>All playlists</b></div>}</span>
-
+            <span onClick={() => setIsDropped((prev) => !prev)}>
+                {fixedPlaylist.current !== null ?
+                    <div className='playlistToggleItem'><img src={songDict[fixedPlaylist.current].url} alt="playlistIcon" /> <b>{fixedPlaylist.current}</b></div>
+                    :
+                    <div className='playlistToggleItem'><b>All playlists</b></div>}
+            </span>
         </div>
-
-
     )
 }

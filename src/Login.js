@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function LoginPage() {
+export default function LoginPage() {
   const [token, setToken] = useState("");
   const nav = useNavigate();
 
@@ -16,16 +16,15 @@ function LoginPage() {
    * After redirect, try to extract and save the response token if auth was successful
    */
   useEffect(() => {
+    // Try to get saved token/hash
     const hash = window.location.hash;
     let token = window.localStorage.getItem("token");
-
-    console.log("Hash:", hash); // Debugging line
 
     if (!token && hash) {
       const tokenMatch = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"));
       if (tokenMatch) {
         token = tokenMatch.split("=")[1];
-        window.location.hash = ""; // Clear the hash from URL
+        window.location.hash = ""; // Clear the hash and save the token (to browser)
         window.localStorage.setItem("token", token);
 
         // Create function to remove the token if the page is closed before the user logs out
@@ -41,6 +40,7 @@ function LoginPage() {
     }
   }, [nav, setToken]);
 
+
   /**
    * Clear the token
    */
@@ -48,7 +48,6 @@ function LoginPage() {
     setToken("");
     window.localStorage.removeItem("token");
   }
-
 
 
   return (<>
@@ -69,8 +68,5 @@ function LoginPage() {
         <button onClick={logout}>Logout</button>
       </>}
   </>);
-
-
 }
 
-export default LoginPage;

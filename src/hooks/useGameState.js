@@ -41,10 +41,11 @@ export default function useGameState(songDict) {
   }, [gameState.gameOver, gameState.guesses])
 
 
+  /**
+   * Update the user's saved score if it beats local best score
+   */
   useEffect(() => {
-    // Update score if it beats local best score
     if (gameState.score > gameState.bestScore) {
-      // setBestScore(gameState.score);
       setGameState(prev => ({
         ...prev,
         bestScore: prev.score,
@@ -71,26 +72,25 @@ export default function useGameState(songDict) {
 
     const tracks = await response.json();
 
-    if(!query.name.toLowerCase().includes(tracks.data[0].title_short.toLowerCase())){
+    if (!query.name.toLowerCase().includes(tracks.data[0].title_short.toLowerCase())) {
       console.error("Best result does not match target song. Skipping this song: ", query.name)
       return null;
     }
 
-    if(tracks.data.length === 0) {
+    if (tracks.data.length === 0) {
       console.error("No results were found. Skipping this song: ", query.name);
       return null;
-    
+
     }
 
-
-    console.log(tracks.data[0])
+    // console.log(tracks.data[0])
 
     return tracks.data[0].preview;
   }
 
 
   /**
-   * Randomly select a song from the user's playlists, and get the audio. Also reset game values.
+   * Randomly select an available song from the user's playlists, and get the audio. Also reset game values.
    */
   const chooseNewSong = useCallback(async () => {
     const playlistKeys = Object.keys(songDict);
@@ -104,11 +104,10 @@ export default function useGameState(songDict) {
       const previewUrl = await getAudioPreview(targetSong.current);
 
       // If preview is null, need to find a new song
-      if(previewUrl === null) {
+      if (previewUrl === null) {
         chooseNewSong();
         return;
       }
-
 
       setGameState(prev => ({
         ...prev,
@@ -125,19 +124,18 @@ export default function useGameState(songDict) {
   /**
    * Handle the logic for the next guess the user makes
    * @param submitRef The current reference to submit_ref
+   * @param searchItems List of valid search terms
    */
   function nextGuess(submitRef, searchItems) {
-    const val = submitRef.value
 
-    if (gameState.guesses.length < 5 && searchItems.includes(val)) {
+    const val = submitRef !== null ? submitRef.value : "Skipped...";
+
+    if (gameState.guesses.length < 5 && (searchItems.includes(val) || val === "Skipped...")) {
       setGameState(prev => ({
         ...prev,
         guesses: [...prev.guesses, val],
         maxPlaybackLength: (2 ** (prev.guesses.length + 1)) * 1000,
       }))
-
-      // setGuesses((prev) => [...prev, val]);
-      // setMaxPlaybackLength((2 ** (guesses.length + 1)) * 1000)
 
       if (gameState.guesses.length === 4 || val === targetSong.current.name) {
         setGameState(prev => ({
@@ -145,43 +143,20 @@ export default function useGameState(songDict) {
           gameOver: true,
           maxPlaybackLength: 30000,
         }))
-
-
-        // setGameOver(true);
-        // setMaxPlaybackLength(30000);
       }
 
-      submitRef.value = "";
+      if (submitRef) {
+        submitRef.value = "";
+      }
     }
   }
 
 
-  function skipGuess() {
-    if (gameState.guesses.length < 5) {
-      // setGuesses([...guesses, "Skipped..."]);
-      // setMaxPlaybackLength((2 ** (guesses.length + 1)) * 1000)
 
-      setGameState(prev => ({
-        ...prev,
-        guesses: [...prev.guesses, "Skipped..."],
-        maxPlaybackLength: (2 ** (prev.guesses.length + 1)) * 1000,
-      }))
-    }
-
-    if (gameState.guesses.length === 4) {
-      // setGameOver(true);
-      // setMaxPlaybackLength(30000);
-
-      setGameState(prev => ({
-        ...prev,
-        gameOver: true,
-        maxPlaybackLength: 30000,
-      }))
-
-    }
-  }
-
-
+  /**
+   * Set the current value of the progress bar (thumb location)
+   * @param {*} val Value to set the progress bar to (in range 0 to 1600)
+   */
   const setPbarValue = (val) => {
     setGameState(prev => ({
       ...prev,
@@ -190,5 +165,5 @@ export default function useGameState(songDict) {
   }
 
 
-  return { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, skipGuess, setPbarValue };
+  return { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, setPbarValue };
 }

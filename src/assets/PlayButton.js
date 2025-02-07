@@ -7,18 +7,16 @@ import pauseIcon from './../icons/pause.svg';
 
 export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputVal }) {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [play, { stop, sound }] = useSound(audioUrl,
-        {
-            volume: volume,
-        }); // Initialize useSound
-    const timeoutRef = useRef(null);
+    const [play, { stop, sound }] = useSound(audioUrl, { volume: volume });
+    const timeoutRef = useRef(null);    // Stop playback if the user has run out of time
 
 
-
-    // Stop playing when the audioUrl changes
+    /**
+     * Stop playing audio when the audioUrl changes
+    */
     useEffect(() => {
         if (isPlaying) {
-            stop()
+            stop();
         };
         setIsPlaying(false);
 
@@ -27,40 +25,45 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
 
 
 
-
+    /**
+     * Handle when the user clicks the pause/play button.
+     * When audio is stopped it should reset playback to the start of the track.
+     */
     const handleToggle = () => {
-        inputVal(0);
+        inputVal(0);    // Will always begin at start of track
+        setIsPlaying(!isPlaying);
 
         if (isPlaying) {
-            stop(); // Stop the audio
+            stop();
 
+            // Stop the timeout from firing at a later time
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
                 timeoutRef.current = null;
             }
         } else {
+            play();
 
-            play(); // Play the audio
-
+            // Automatically stop playback after the guess timer runs out
             timeoutRef.current = setTimeout(() => {
                 stop();
-                setIsPlaying(false); // Update state to indicate the sound has stopped
+                setIsPlaying(false);
                 inputVal(0);
 
-            }, maxPlaybackLength); // 5000 ms = 5 seconds
+            }, maxPlaybackLength);
         }
-        setIsPlaying(!isPlaying); // Toggle the playing state
     };
 
 
-
-
-
+    /**
+     * Continuously increase progress on the progress bar (and timer) as
+     * the song is playing.
+     */
     useEffect(() => {
         if (!isPlaying) return;
 
         const updateProgress = () => {
-            inputVal(sound.seek() * 100) ;
+            inputVal(sound.seek() * 100);
         };
 
         const interval = setInterval(updateProgress, 10);
@@ -73,13 +76,9 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
         <>
             {!isPlaying ?
                 <img alt='playAudio' src={playIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
-
                 :
                 <img alt='pauseAudio' src={pauseIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
-
             }
         </>
-
-
     )
 }
