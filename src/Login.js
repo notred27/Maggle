@@ -7,7 +7,7 @@ export default function LoginPage() {
 
   const CLIENT_ID = "fc40b34070264f1185c0ac9429b3f8c6";
   // const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
-  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/";   // Deployment redirect
+  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/login";   // Deployment redirect
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
   const RESPONSE_TYPE = "token";
 
