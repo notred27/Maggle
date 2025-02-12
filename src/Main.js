@@ -85,18 +85,13 @@ export default function Main() {
   useEffect(() => {
     if (profile) {
 
-      // if (uid === "me") {
-      //   setTargetProfile(profile.id);
+      if (uid === profile.id) {
+        setTargetProfile(profile.id);
 
-      // } else {
-      //   setTargetProfile(uid);
+      } else {
+        setTargetProfile(uid);
+      }
 
-      // }
-
-      setTargetProfile(profile.id);
-
-
-      // getPlaylists(profile.id); // Call getPlaylists when profile is set
     }
   }, [profile, getPlaylists]);
 
