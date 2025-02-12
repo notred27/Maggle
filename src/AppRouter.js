@@ -13,8 +13,8 @@ export default function AppRouter() {
     return (
         <div className="App">
           <Routes>
-            <Route path="/" element={ <Main/> } />
-            <Route path="/login" element={ <Login/> } />
+            <Route path="/:uid?" element={ <Main/> } />
+            <Route path="/login/:uid?" element={ <Login/> } />
           </Routes>
         </div>
       )

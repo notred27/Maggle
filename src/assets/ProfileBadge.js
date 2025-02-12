@@ -66,6 +66,11 @@ export default function ProfileBadge({ profileUrl, displayName, volume, setVolum
 
         </div>
 
+
+        <h4>Share your playlists!</h4>
+
+        <button onClick={() => {navigator.clipboard.writeText("HELLO CLIPBOARD!")}}>Copy Link</button>
+
         <h4>Log Out</h4>
         <button onClick={logout}>Logout</button>
       </div>}

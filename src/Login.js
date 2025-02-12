@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSpotifyProfile from './hooks/useSpotifyProfile';
 
 export default function LoginPage() {
+  const { uid } = useParams();
+  console.log(uid)
+
+  if(uid) {
+    window.localStorage.setItem("uid", uid);
+  } 
+
   const [token, setToken] = useState("");
   const nav = useNavigate();
+
+  const {profile, getProfile} = useSpotifyProfile();
 
   const CLIENT_ID = "fc40b34070264f1185c0ac9429b3f8c6";
   // const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
@@ -28,17 +38,40 @@ export default function LoginPage() {
         window.localStorage.setItem("token", token);
 
         // Create function to remove the token if the page is closed before the user logs out
-        window.addEventListener('beforeunload', () => {
-          localStorage.removeItem('token');
-        });
+        // window.addEventListener('beforeunload', () => {
+        //   localStorage.removeItem('token');
+        // });
+
+
+
       }
     }
 
     if (token) {
       setToken(token); 
-      nav("/");
+      getProfile();
+      // nav("/");
     }
-  }, [nav, setToken]);
+  }, [getProfile, setToken]);
+
+
+  useEffect(() => {
+    if(profile) {
+
+      let uid = window.localStorage.getItem("uid");
+
+
+      if(uid !== "") {
+        window.localStorage.setItem("uid", "");
+        nav(`/${uid}`, { state: { profile: profile } });
+
+      } else {
+        nav(`/${profile.id}`, { state: { profile: profile } });
+
+      }
+
+    }
+  }, [nav, profile])
 
 
   /**

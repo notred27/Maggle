@@ -6,22 +6,52 @@ import PlaylistSelect from './assets/PlaylistSelect.js';
 import ProfileBadge from './assets/ProfileBadge.js'
 
 
+
+
 import usePlaylists from './hooks/usePlaylists.js';
 import useGameState from './hooks/useGameState.js';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 
 export default function Main() {
+  // TODO: Take spotify profile API logic and move it to a higher hook that is created in the Login page. Then pass that hook to this when the data is received. 
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.removeItem('token');
+  });
+
+
+  const { uid } = useParams();
+
+  const location = useLocation();
+  const profile = location.state?.profile;
+
+
+
+
+  // console.log("OBJ: ", profile)
+
   const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
 
-  const [profile, setProfile] = useState(null);
+  // const [profile, setProfile] = useState(null);
 
-  const { songDict, searchItems, userDict, getPlaylists } = usePlaylists(profile);
+  const [targetProfile, setTargetProfile] = useState(null);
+  const { songDict, searchItems, userDict, getPlaylists, isLoaded } = usePlaylists(profile);
   const { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, setPbarValue } = useGameState(songDict);
 
   const submit_ref = useRef(null);
   const [volume, setVolume] = useState(0.5);
+
+
+
+
+  useEffect(() => {
+    if (targetProfile) {
+      getPlaylists(targetProfile);
+
+    }
+  }, [targetProfile, getPlaylists])
+
 
   /**
     * Check if the user is logged in, and get their profile if they are.
@@ -30,14 +60,22 @@ export default function Main() {
     const accessToken = window.localStorage.getItem('token');
 
     if (!accessToken) {
+
+
+      if (uid) {
+        nav(`/login/${uid}`);
+        return;
+      }
+
+
       nav('/login'); // Redirect if no token
       return;
     }
 
-    async function fetchData() {
-      await getProfile();
-    }
-    fetchData();
+    // async function fetchData() {
+    //   await getProfile();
+    // }
+    // fetchData();
   }, [nav]);
 
 
@@ -46,7 +84,17 @@ export default function Main() {
    */
   useEffect(() => {
     if (profile) {
-      getPlaylists(); // Call getPlaylists when profile is set
+
+      if (uid === "me") {
+        setTargetProfile(profile.id);
+
+      } else {
+        setTargetProfile(uid);
+
+      }
+
+
+      // getPlaylists(profile.id); // Call getPlaylists when profile is set
     }
   }, [profile, getPlaylists]);
 
@@ -99,28 +147,27 @@ export default function Main() {
    * Choose a new song if all data has been fetched form Spotify (profile and playlists)
    */
   useEffect(() => {
-    if (!loading && songDict && Object.keys(songDict).length > 0) {
+    if (profile && songDict && Object.keys(songDict).length > 0) {
       chooseNewSong();
     }
-  }, [searchItems, chooseNewSong, songDict, loading]);
+  }, [searchItems, chooseNewSong, songDict, profile]);
 
 
   /**
    * Get the user's Spotify data when the site first loads (after auth)
    */
-  async function getProfile() {
-    let accessToken = window.localStorage.getItem('token');
+  // async function getProfile() {
+  //   let accessToken = window.localStorage.getItem('token');
 
-    const response = await fetch('https://api.spotify.com/v1/me', {
-      headers: {
-        Authorization: 'Bearer ' + accessToken
-      }
-    });
+  //   const response = await fetch('https://api.spotify.com/v1/me', {
+  //     headers: {
+  //       Authorization: 'Bearer ' + accessToken
+  //     }
+  //   });
 
-    const data = await response.json();
-    setProfile(data);
-    setLoading(false);
-  }
+  //   const data = await response.json();
+  //   setProfile(data);
+  // }
 
 
   // Create HTML elements for each guess (and empty guesses)
@@ -132,10 +179,15 @@ export default function Main() {
 
 
   // Return a dummy version of this page until the user's details have been received
-  if (loading) {
+  if (!profile) {
     return <div className="App"><h2>Loading...</h2></div>;
   }
 
+
+  if (!isLoaded) {
+    return <div className="App"><h2>Retrieving {targetProfile}'s Playlists...</h2></div>;
+
+  }
 
   // Return the main page for the app
   return (
