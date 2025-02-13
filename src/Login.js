@@ -97,8 +97,19 @@ export default function LoginPage() {
       </>
       :
       <>
-        <h1>An error occurred. Please ensure that you log out.</h1>
-        <button onClick={logout}>Logout</button>
+        {!profile ?
+          <>
+            <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
+            <button onClick={logout}>Logout</button>
+          </> 
+        :
+        <>
+
+          <h1>An error occurred. Please ensure that you log out.</h1>
+          <button onClick={logout}>Logout</button>
+        </> 
+        }
+        
       </>}
   </>);
 }
