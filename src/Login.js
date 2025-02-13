@@ -1,90 +1,76 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import useSpotifyProfile from './hooks/useSpotifyProfile';
+import useToken from './hooks/useToken.js';
 
-export default function LoginPage() {
-  const { uid } = useParams();
-  console.log(uid)
 
-  if(uid) {
-    window.localStorage.setItem("uid", uid);
-  } 
 
-  const [token, setToken] = useState("");
-  const nav = useNavigate();
-
-  const {profile, getProfile} = useSpotifyProfile();
+export default function Login() {
 
   const CLIENT_ID = "fc40b34070264f1185c0ac9429b3f8c6";
-  // const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
-  const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/login";   // Deployment redirect
+  const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
+  // const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/login";   // Deployment redirect
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
   const RESPONSE_TYPE = "token";
+  const TIMEOUT = 3600000;
+
+
+  const { setToken, getToken } = useToken();
+  const nav = useNavigate();
+  const { uid } = useParams();
+
+  if (uid) {  // Store uid when first logging in if redirected
+    window.localStorage.setItem("uid", uid);
+  }
 
 
   /**
    * After redirect, try to extract and save the response token if auth was successful
    */
   useEffect(() => {
-    // Try to get saved token/hash
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let token = getToken();
 
     if (!token && hash) {
       const tokenMatch = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"));
       if (tokenMatch) {
         token = tokenMatch.split("=")[1];
         window.location.hash = ""; // Clear the hash and save the token (to browser)
-        window.localStorage.setItem("token", token);
 
-        // Create function to remove the token if the page is closed before the user logs out
-        // window.addEventListener('beforeunload', () => {
-        //   localStorage.removeItem('token');
-        // });
-
-
-
+        setToken(token, TIMEOUT);
       }
     }
-
-    if (token) {
-      setToken(token); 
-      getProfile();
-      // nav("/");
-    }
-  }, [getProfile, setToken]);
-
-
-  useEffect(() => {
-    if(profile) {
-
-      let uid = window.localStorage.getItem("uid");
-
-
-      if(uid !== "") {
-        window.localStorage.setItem("uid", "");
-        nav(`/${uid}`, { state: { profile: profile } });
-
-      } else {
-        nav(`/${profile.id}`, { state: { profile: profile } });
-
-      }
-
-    }
-  }, [nav, profile])
+  }, [setToken]);
 
 
   /**
-   * Clear the token
+   * If you already have an auth token, go to the target user
+   */
+  useEffect(() => {
+    if (getToken()) {
+      let uid = window.localStorage.getItem("uid");
+
+      if (uid !== "") {
+        window.localStorage.setItem("uid", "");
+        nav(`/${uid}`);
+
+      } else {
+        nav(`/`);
+      }
+    }
+  }, [nav])
+
+
+  /**
+   * Clear the token on logout
    */
   const logout = () => {
-    setToken("");
-    window.localStorage.removeItem("token");
+    setToken("", 0);
+
   }
 
 
   return (<>
-    {!token ?
+    {!getToken() ?
       <>
         <div>
           <h1>Maggle!</h1>
@@ -97,20 +83,13 @@ export default function LoginPage() {
       </>
       :
       <>
-        {!profile ?
-          <>
-            <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
-            <button onClick={logout}>Logout</button>
-          </> 
-        :
-        <>
-
-          <h1>An error occurred. Please ensure that you log out.</h1>
+        <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
+        <div>
           <button onClick={logout}>Logout</button>
-        </> 
-        }
-        
-      </>}
+
+        </div>
+      </>
+      }
   </>);
 }
 

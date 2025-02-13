@@ -11,72 +11,61 @@ import ProfileBadge from './assets/ProfileBadge.js'
 import usePlaylists from './hooks/usePlaylists.js';
 import useGameState from './hooks/useGameState.js';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import useToken from './hooks/useToken.js';
+import useSpotifyProfile from './hooks/useSpotifyProfile';
+import ProgressBar from './assets/ProgressBar.js';
 
 
 export default function Main() {
-  // TODO: Take spotify profile API logic and move it to a higher hook that is created in the Login page. Then pass that hook to this when the data is received. 
-
-  window.addEventListener('beforeunload', () => {
-    localStorage.removeItem('token');
-  });
-
 
   const { uid } = useParams();
-
-  const location = useLocation();
-  const profile = location.state?.profile;
-
-
-
-
-  // console.log("OBJ: ", profile)
+  const { profile, getProfile } = useSpotifyProfile();
 
   const nav = useNavigate();
-
-  // const [profile, setProfile] = useState(null);
 
   const [targetProfile, setTargetProfile] = useState(null);
   const { songDict, searchItems, userDict, getPlaylists, isLoaded } = usePlaylists(profile);
   const { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, setPbarValue } = useGameState(songDict);
-
   const submit_ref = useRef(null);
   const [volume, setVolume] = useState(0.5);
+  const { setToken, getToken } = useToken();
 
 
-
-
+  /**
+   * Get the correct playlists for when a target user changes
+   */
   useEffect(() => {
     if (targetProfile) {
       getPlaylists(targetProfile);
-
     }
   }, [targetProfile, getPlaylists])
 
 
   /**
-    * Check if the user is logged in, and get their profile if they are.
+    * Check if the user is logged in, and get their profile if they are. Otherwise redirect to login if token has expired
     */
   useEffect(() => {
-    const accessToken = window.localStorage.getItem('token');
-
-    if (!accessToken) {
-
-
-      if (uid) {
-        nav(`/login/${uid}`);
-        return;
-      }
-
-
-      nav('/login'); // Redirect if no token
+    if (!getToken()) {
+      nav('/login'); // Redirect if no token, or if token expired
       return;
     }
 
-    // async function fetchData() {
-    //   await getProfile();
-    // }
-    // fetchData();
+    getProfile();
+
   }, [nav]);
+
+
+  /**
+   * Redirect when base user is not specified in the url (on initial redirect from login)
+   */
+  useEffect(() => {
+    if (profile && uid === undefined) {
+      nav(`/login/${profile.id}`);
+      return;
+    }
+
+  }, [profile]);
+
 
 
   /**
@@ -84,7 +73,6 @@ export default function Main() {
    */
   useEffect(() => {
     if (profile) {
-
       if (uid === profile.id) {
         setTargetProfile(profile.id);
 
@@ -96,48 +84,7 @@ export default function Main() {
   }, [profile, getPlaylists]);
 
 
-  /**
-   * Update the colors on the different sections of the progress
-   * bar according to the current guess.
-   */
-  const updateDynamicGradient = useCallback(() => {
-    const computedStyles = getComputedStyle(document.querySelector('body'));
-
-    // Get the current colors of the theme css variables
-    const dullAccent = computedStyles.getPropertyValue("--dull-accent-color").trim();
-    const secondaryBtn = computedStyles.getPropertyValue("--secondary-btn-color").trim();
-    const pageBg = computedStyles.getPropertyValue("--page-background-color").trim();
-
-    let gradient = `linear-gradient(to right, ${dullAccent} 0% 6%, `;
-
-    let lastPercent = 6.25; // Starting percentage of the gradient (100/(2^4))
-    for (let i = 0; i < 4; i++) {
-      gradient += `${secondaryBtn} ${lastPercent}% calc(${lastPercent}% + 2px),`;
-      let dynamicColor = i < gameState.guesses.length ? dullAccent : pageBg;
-      gradient += `${dynamicColor} calc(${lastPercent}% + 2px) ${lastPercent + lastPercent}%, `;
-      lastPercent += lastPercent;
-    }
-
-    document.documentElement.style.setProperty("--dynamic-grad", `${gradient.substring(0, gradient.length - 2)})`);
-  }, [gameState.guesses]);
-
-
-  /**
-   * Update the progress bar's colors when a new guess has been made.
-   */
-  useEffect(() => {
-    updateDynamicGradient();
-  }, [gameState.guesses, updateDynamicGradient]);
-
-
-  /**
-   * Update the profile bar's color when the theme changes.
-   */
-  useEffect(() => {
-    const observer = new MutationObserver(() => updateDynamicGradient());
-    observer.observe(document.querySelector('body'), { attributes: true, attributeFilter: ["data-theme"] });
-    return () => observer.disconnect();
-  }, [updateDynamicGradient]);
+ 
 
 
   /**
@@ -150,21 +97,7 @@ export default function Main() {
   }, [searchItems, chooseNewSong, songDict, profile]);
 
 
-  /**
-   * Get the user's Spotify data when the site first loads (after auth)
-   */
-  // async function getProfile() {
-  //   let accessToken = window.localStorage.getItem('token');
 
-  //   const response = await fetch('https://api.spotify.com/v1/me', {
-  //     headers: {
-  //       Authorization: 'Bearer ' + accessToken
-  //     }
-  //   });
-
-  //   const data = await response.json();
-  //   setProfile(data);
-  // }
 
 
   // Create HTML elements for each guess (and empty guesses)
@@ -177,12 +110,12 @@ export default function Main() {
 
   // Return a dummy version of this page until the user's details have been received
   if (!profile) {
-    return <div className="App"><h2>Loading...</h2></div>;
+    return <div className="App"><h2>Loading...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
   }
 
 
   if (!isLoaded) {
-    return <div className="App"><h2>Retrieving {targetProfile}'s Playlists...</h2></div>;
+    return <div className="App"><h2>Retrieving {targetProfile}'s Playlists...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
 
   }
 
@@ -206,26 +139,27 @@ export default function Main() {
 
       {!gameState.gameOver && <div className='guessContainer' > {renderedGuesses} </div>}
 
-      {!gameState.gameOver &&
+
+
+
+      {!gameState.gameOver && <>
+
+
         <div className='guessControlContainer'>
 
-          <input id='trackProgress' type='range' value={gameState.pbarValue} min={0} max={1600} step={1} disabled />
           <div>
+            <ProgressBar state={gameState} >
 
-            <span className='submissionBar'>
-              <span className='noselect'>0:{String(Math.floor(gameState.pbarValue / 100 + 0.1)).padStart(2, '0')}</span>
+            
+              <PlayButton
+                audioUrl={gameState.audioUrl}
+                volume={volume}
+                maxPlaybackLength={gameState.maxPlaybackLength}
+                inputVal={setPbarValue}
+              />
+            
+            </ProgressBar>
 
-              {gameState.audioUrl && (
-                <PlayButton
-                  audioUrl={gameState.audioUrl}
-                  volume={volume}
-                  maxPlaybackLength={gameState.maxPlaybackLength}
-                  inputVal={setPbarValue}
-                />
-              )}
-
-              <span className='noselect'>0:{String(gameState.maxPlaybackLength / 1000).padStart(2, '0')}</span>
-            </span>
 
             <SearchBar searchRef={submit_ref} items={searchItems} />
 
@@ -239,6 +173,9 @@ export default function Main() {
           </div>
 
         </div>
+
+
+      </>
       }
 
       {gameState.gameOver && <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={gameState.guesses} chooseNewSong={chooseNewSong} gameOver={gameState.gameOver} volume={volume} audio={gameState.audioUrl} />}

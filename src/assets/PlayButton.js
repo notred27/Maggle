@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import useSound from 'use-sound';
 
 import playIcon from './../icons/play.svg';
+import loadIcon from './../icons/loading-play.svg';
 import pauseIcon from './../icons/pause.svg';
 
 
@@ -73,11 +74,17 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
 
 
     return (
-        <>
+        <>{sound ? <>
             {!isPlaying ?
                 <img alt='playAudio' src={playIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
                 :
                 <img alt='pauseAudio' src={pauseIcon} onClick={handleToggle} disabled={!audioUrl} style={{ width: "30px" }} />
+            }
+                </>
+            :
+
+            <img alt='playAudio' src={loadIcon} style={{ width: "30px" }} />
+           
             }
         </>
     )

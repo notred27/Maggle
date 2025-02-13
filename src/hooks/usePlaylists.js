@@ -1,3 +1,4 @@
+import useToken from './useToken.js';
 
 
 import { useState, useCallback } from "react";
@@ -8,6 +9,7 @@ export default function usePlaylists(profile) {
   const [userDict, setUserDict] = useState({});
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const {setToken, getToken} = useToken();
 
   /**
    * Query Spotify's API for a list of different users
@@ -80,7 +82,7 @@ export default function usePlaylists(profile) {
    * @param {*} delayMs Delay between batches
    * @returns 
    */
-  async function fetchBatchWithRateLimit(urls, options, batchSize = 5, delayMs = 400) {
+  async function fetchBatchWithRateLimit(urls, options, batchSize = 8, delayMs = 400) {
     const results = [];
 
     for (let i = 0; i < urls.length; i += batchSize) {
@@ -109,7 +111,7 @@ export default function usePlaylists(profile) {
 
     setIsLoaded(false);
 
-    const accessToken = window.localStorage.getItem("token");
+    const accessToken = getToken() //window.localStorage.getItem("token");
 
     const songs = new Set();   // Ensure each song is only added as a search key once
     const userSet = new Set(); // Ensure only one object is created for each unique Spotify profile
@@ -166,8 +168,6 @@ export default function usePlaylists(profile) {
     });
 
 
-    console.log(playlistDict)
-
     // Fetch the details of all users who have added a song to your playlists
     const userDict = await getUserInfo(userSet, accessToken);
 
@@ -175,6 +175,8 @@ export default function usePlaylists(profile) {
     setSongDict(playlistDict);
     setSearchItems(Array.from(songs));
     setIsLoaded(true);
+
+    console.log(playlistDict)
   }, [profile])
 
 

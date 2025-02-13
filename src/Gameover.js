@@ -49,7 +49,7 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
    */
   useEffect(() => {
     if (gameOver) {
-      resRef.current = Math.round(Math.random() * 5);
+      resRef.current = Math.round(Math.random() * 4);
       play(); // Play full song preview on game over
     } else {
       pause(); // Stop when component is not rendered
