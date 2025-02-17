@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import SearchBar from './assets/SearchBar.js';
 import PlayButton from './assets/PlayButton.js';
 import Gameover from './Gameover';
@@ -38,9 +38,9 @@ export default function Main() {
     if (targetProfile) {
       getPlaylists(targetProfile);
     }
-  }, [targetProfile, getPlaylists])
+  }, [targetProfile])
 
-
+  
   /**
     * Check if the user is logged in, and get their profile if they are. Otherwise redirect to login if token has expired
     */
@@ -64,8 +64,7 @@ export default function Main() {
       return;
     }
 
-  }, [profile]);
-
+  }, [profile, uid, nav]);
 
 
   /**
@@ -81,7 +80,7 @@ export default function Main() {
       }
 
     }
-  }, [profile, getPlaylists]);
+  }, [profile]);
 
 
  
@@ -101,12 +100,14 @@ export default function Main() {
 
 
   // Create HTML elements for each guess (and empty guesses)
-  const renderedGuesses = Array(5).fill(null).map((_, i) => (
-    <h4 key={i} className='guessText' style={{ color: gameState.guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red" }}>
-      {gameState.guesses[i] || "\u00A0"}
-    </h4>
-  ));
-
+  const renderedGuesses = useMemo(() => 
+    Array(5).fill(null).map((_, i) => (
+      <h4 key={i} className='guessText' style={{ color: gameState.guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red" }}>
+        {gameState.guesses[i] || "\u00A0"}
+      </h4>
+    )), 
+    [gameState.guesses]
+  );
 
   // Return a dummy version of this page until the user's details have been received
   if (!profile) {
@@ -133,7 +134,12 @@ export default function Main() {
         <h1 className='noselect'>Maggle!</h1>
 
         {profile !== null &&
-          <ProfileBadge profileUrl={profile.images[1].url} displayName={profile.display_name} volume={volume} setVolume={setVolume} />
+          <ProfileBadge 
+            profileUrl={profile.images[1].url || 'play.svg'} 
+            displayName={profile.display_name}
+            volume={volume} 
+            setVolume={setVolume} 
+          />
         }
       </header>
 
@@ -149,8 +155,7 @@ export default function Main() {
 
           <div>
             <ProgressBar state={gameState} >
-
-            
+              
               <PlayButton
                 audioUrl={gameState.audioUrl}
                 volume={volume}
@@ -166,7 +171,11 @@ export default function Main() {
             <span className='submissionBar'>
               <button id='skipBtn' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
 
-              <PlaylistSelect songDict={songDict} fixedPlaylist={fixedPlaylist} chooseNewSong={chooseNewSong} />
+              <PlaylistSelect 
+                songDict={songDict} 
+                fixedPlaylist={fixedPlaylist}
+                chooseNewSong={chooseNewSong}
+              />
 
               <button id='submitBtn' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
             </span>

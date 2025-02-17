@@ -84,9 +84,22 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
         }
 
         <div style={{ display: "flex", flexDirection: "row" }}>
-          {guesses.map(g => [
-            <div className='guessTile' style={{ backgroundColor: `${g === targetSong.current.name ? "green" : g === "Skipped..." ? "gray" : "red"}` }}>&nbsp;<span>{g}</span></div>
-          ])}
+          {guesses.map((g, idx) => {
+
+            if(g === targetSong.current.name) {
+              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "green"}}>✔️<span>{g}</span></div>
+             
+            } else if (g === "Skipped..."){
+              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "gray"}}>➖<span>{g}</span></div>
+
+            } else {
+
+              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "red"}}>❌<span>{g}</span></div>
+
+            }
+
+          }
+          )}
         </div>
 
         {/* <h3>Add to playlist</h3> */}

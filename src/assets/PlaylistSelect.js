@@ -35,7 +35,7 @@ export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong 
                 <div className='playlistSearchDropdown'>
                     <div className='playlistToggleItem' onClick={() => setFixedPlaylist(null)}>All playlists</div>
                     {Object.keys(songDict).map((k) => {
-                        return <div className='playlistToggleItem' onClick={() => setFixedPlaylist(k)}><img src={songDict[k].url} alt="playlistIcon" />&nbsp;{k}</div>
+                        return <div key={k} className='playlistToggleItem' onClick={() => setFixedPlaylist(k)}><img src={songDict[k].url} alt="playlistIcon" />&nbsp;{k}</div>
                     })}
                 </div>
             }

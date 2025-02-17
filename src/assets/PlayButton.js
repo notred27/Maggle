@@ -8,7 +8,9 @@ import pauseIcon from './../icons/pause.svg';
 
 export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputVal }) {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [play, { stop, sound }] = useSound(audioUrl, { volume: volume });
+    // Include tmp URL so useSOund initially renders
+    const [play, { stop, sound }] = useSound(audioUrl ?? "https://cdnt-preview.dzcdn.net/api/1/1/3/2/a/0/32a0640a2e76d7011dd92eb51492aad1.mp3?hdnea=exp=1739817784~acl=/api/1/1/3/2/a/0/32a0640a2e76d7011dd92eb51492aad1.mp3*~data=user_id=0,application_id=42~hmac=c1690f11bdf30428ac72ca0b4af0ece6b76683bd0d4a825a8d92bdcfc0f6c999", 
+         { volume: volume});
     const timeoutRef = useRef(null);    // Stop playback if the user has run out of time
 
 
@@ -23,7 +25,6 @@ export default function PlayButton({ audioUrl, volume, maxPlaybackLength, inputV
 
         return () => stop();
     }, [audioUrl, sound]);
-
 
 
     /**

@@ -3,13 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useToken from './hooks/useToken.js';
 
 
-
 export default function Login() {
-
-  const CLIENT_ID = "fc40b34070264f1185c0ac9429b3f8c6";
-  const REDIRECT_URI = "http://localhost:3000/login";   // Dev redirect
-  // const REDIRECT_URI = "https://aws-deployment.dhqsr5m8z3m6j.amplifyapp.com/login";   // Deployment redirect
-  const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize";
+  const CLIENT_ID =  process.env.REACT_APP_CLIENT_ID;
+  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI; 
+  const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
   const RESPONSE_TYPE = "token";
   const TIMEOUT = 3600000;
 
@@ -18,28 +15,29 @@ export default function Login() {
   const nav = useNavigate();
   const { uid } = useParams();
 
-  if (uid) {  // Store uid when first logging in if redirected
-    window.localStorage.setItem("uid", uid);
-  }
+  const [storedUid, setStoredUid] = useState(localStorage.getItem("uid") || "");
+  useEffect(() => {
+    if (uid) {
+      localStorage.setItem("uid", uid);
+      setStoredUid(uid);
+    }
+  }, [uid]);
+
 
 
   /**
    * After redirect, try to extract and save the response token if auth was successful
    */
   useEffect(() => {
-    const hash = window.location.hash;
-    let token = getToken();
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const token = hashParams.get("access_token");
 
-    if (!token && hash) {
-      const tokenMatch = hash.substring(1).split("&").find(elem => elem.startsWith("access_token"));
-      if (tokenMatch) {
-        token = tokenMatch.split("=")[1];
-        window.location.hash = ""; // Clear the hash and save the token (to browser)
-
-        setToken(token, TIMEOUT);
-      }
+    if (token && !getToken()) {
+      setToken(token, TIMEOUT);
+      window.location.hash = ""; // Clear hash
     }
   }, [setToken]);
+
 
 
   /**
@@ -47,17 +45,17 @@ export default function Login() {
    */
   useEffect(() => {
     if (getToken()) {
-      let uid = window.localStorage.getItem("uid");
 
-      if (uid !== "") {
-        window.localStorage.setItem("uid", "");
-        nav(`/${uid}`);
-
+      if (storedUid) {
+        window.localStorage.removeItem("uid");
+        nav(`/${storedUid}`);
       } else {
+        // nav(`/${profile.id}`);  // Redirect to logged-in user's page after profile has loaded
         nav(`/`);
       }
     }
-  }, [nav])
+  }, [nav, getToken]);
+
 
 
   /**
@@ -85,11 +83,11 @@ export default function Login() {
       <>
         <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
         <div>
-          <button onClick={logout}>Logout</button>
+          <button onClick={logout}>I understand</button>
 
         </div>
       </>
-      }
+    }
   </>);
 }
 
