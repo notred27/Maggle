@@ -176,7 +176,7 @@ export default function usePlaylists(profile) {
     setSearchItems(Array.from(songs));
     setIsLoaded(true);
 
-    console.log(playlistDict)
+    // console.log(playlistDict)
   }, [profile])
 
 

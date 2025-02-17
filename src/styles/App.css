@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
   display: grid;
@@ -8,6 +9,10 @@
   color: var(--primary-text-color);
 }
 
+
+#searchBarContainer {
+  position: relative;
+}
 
 .searchBarItem {
   width: 100%;
@@ -37,7 +42,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 5px; 
+  border-radius: 5px;
 }
 
 
@@ -53,6 +58,7 @@
   background-color: var(--secondary-background-color);
   transition: background-color 1s ease, color 1s ease;
 
+  z-index: 1000;
 }
 
 .appHeader h1 {
@@ -67,8 +73,6 @@
   background-color: var(--secondary-btn-color);
   padding: 5px 10px 5px 5px;
   border-radius: 40px;
-  cursor: pointer;
-
 }
 
 .profileBadge img {
@@ -102,6 +106,7 @@
   padding: 8px;
   border-radius: 5px;
   margin: 5px;
+  background-color: var(--page-background-color) !important;
 }
 
 .submissionBar {
@@ -160,7 +165,7 @@
   background-color: var(--secondary-background-color);
   padding-bottom: 20px;
   transition: background-color 1s ease, color 1s ease;
-  z-index: 10;
+  
 }
 
 .guessControlContainer>div {
@@ -181,7 +186,13 @@
   margin-top: 6vh;
 }
 
+.gameOverAlbum {
+  width: 30vw;
+}
 
+.gameOverAlbum img {
+  width: 40vh;
+}
 
 .gameoverInfo {
   width: 30vw;
@@ -190,7 +201,31 @@
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+}
 
+#addedByTo {
+  line-height: 2;
+}
+
+
+#addedByTo a:first-child img {
+  height: 25px;
+  width: 25px;
+  border-radius: 15px;
+}
+
+
+
+#addedByTo a:nth-of-type(2) img {
+  height: 20px;
+  width: 20px;
+  border-radius: 2px;
+}
+
+#gameOverGuessContainer {
+  display: flex;
+  flex-direction: row;
+  position: relative;
 }
 
 #skipBtn {
@@ -220,6 +255,7 @@
   border-radius: 3px;
   position: relative;
   margin: 10px;
+  z-index: 1;
 }
 
 
@@ -236,6 +272,22 @@
   display: block;
 }
 
+
+.correctGuess {
+  background-color: green;
+  color: green;
+}
+
+.skippedGuess {
+  background-color: var(--dull-accent-color);
+  color: var(--dull-accent-color);
+}
+
+.incorrectGuess {
+  background-color: red;
+  color: red;
+
+}
 
 #retryBtn {
   background-color: var(--primary-btn-color);
@@ -265,6 +317,10 @@
 .playlistToggleItem img {
   width: 1em;
   height: 1em;
+}
+
+#playlistSearchContainer {
+  position: relative;
 }
 
 .playlistSearchDropdown {
@@ -322,4 +378,30 @@
 #trackProgress::-moz-range-thumb {
   opacity: 0;
   pointer-events: none;
+}
+
+
+#SpotifyLoginLink {
+  background-color: var(--primary-btn-color);
+  color: var(--primary-text-color);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+
+#CORSdisclaimer {
+  width: 70vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+#playBtn {
+  width: 30px;
+}
+
+
+.selectable:hover {
+  filter: brightness(1.15);
+  cursor: pointer;
 }

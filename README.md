@@ -1,5 +1,5 @@
 ### Known Bugs
-- [x] Error playing first song after application loads
+- [ ] Error playing first song after application loads
 - [x] When switching themes, the song progress bar's max length may change
 - [x] Issue logging out (duplicate logout btns required)
 - [x] Nothing is done if a song preview can't be found 
@@ -14,9 +14,11 @@
 ### TODO
 - [x] Format dropdown menu for profile badge
 - [x] Split logic into components
-- [ ] Organize CSS files, and ensure that there are no inline styles
+- [ ] Organize CSS files
+- [x] Remove inline styles from components
 - [x] more responses for game over screen
 - [ ] Create hist of guess times (e.g., how many times user guessed the song in 1 second, 2, ...) 
 - [ ] Average time to listen before correct answer?
 - [x] Fix Amplify env and change keys 
-- [ ] make guest user for those without a spotify account
+- [ ] make guest user for those without a spotify account (they can just use a search bar on the login screen to search for a user)
+- [ ] Mock more components for jest, and create new suites for other components

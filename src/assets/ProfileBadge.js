@@ -43,7 +43,7 @@ export default function ProfileBadge({ profileUrl, displayName, volume, setVolum
 
   return (
     <span className='dropdownMenu' ref={menuRef}>
-      <span className='profileBadge noselect' onClick={() => setIsDropped((prev) => !prev)}>
+      <span className='profileBadge noselect selectable' onClick={() => setIsDropped((prev) => !prev)}>
         <img src={profileUrl} alt='spotifyProfileImg' />
         <h3 >{displayName}</h3>&nbsp;&nbsp;
 
@@ -51,6 +51,7 @@ export default function ProfileBadge({ profileUrl, displayName, volume, setVolum
       </span>
 
       {isDropped && <div className='dropdownContent'>
+
 
         <h4>Audio</h4>
         <input type='range' min="0" max="1" step="0.01" onChange={(e) => changeVolume(e)} value={volume} />
@@ -73,6 +74,7 @@ export default function ProfileBadge({ profileUrl, displayName, volume, setVolum
 
         <h4>Log Out</h4>
         <button onClick={logout}>Logout</button>
+
       </div>}
     </span>
   );

@@ -29,7 +29,7 @@ export default function PlaylistSelect({ songDict, fixedPlaylist, chooseNewSong 
     document.addEventListener('mousedown', closeDropdown);
 
     return (
-        <div ref={playlistMenuRef} style={{ position: "relative" }}>
+        <div id = "playlistSearchContainer" ref={playlistMenuRef} >
 
             {isDropped &&
                 <div className='playlistSearchDropdown'>

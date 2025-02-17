@@ -35,17 +35,17 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
     "That was a journey! But hey, a win is a win!",
     "Down to your last guess, but you pulled through!",
     "You took your time, but you got there in the end! 5 guesses!"],
-  
-    [ "Too bad, you didn't get this one.",
-      "Oops! That wasn’t it!",
-      "Close, but not quite!",
-      "Looks like this one slipped your mind.",
-      "Almost! Better luck next round!"]]
+
+  ["Too bad, you didn't get this one.",
+    "Oops! That wasn’t it!",
+    "Close, but not quite!",
+    "Looks like this one slipped your mind.",
+    "Almost! Better luck next round!"]]
 
 
 
   /**
-   * Handle full preview playback
+   * Handle full preview playback. #TODO: Memoize/ callback play and pause so resRef will not change
    */
   useEffect(() => {
     if (gameOver) {
@@ -61,58 +61,56 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
 
   return (
     <div className='gameoverContainer'>
-      <div style={{ width: "30vw" }}>
-
-        <img style={{ height: "40vh" }} src={targetSong.current.imgUrl} alt='albumCover' />
+      <div className="gameOverAlbum">
+        <img src={targetSong.current.imgUrl} alt='albumCover' />
         <h2>{targetSong.current.name.split(" - ")[0]}</h2>
         <h4>{targetSong.current.name.split(" - ")[1]}</h4>
-
-
-        
-
       </div>
 
 
       <div className='gameoverInfo'>
 
         {guesses[guesses.length - 1] === targetSong.current.name ?
-
           <h2>{responses[guesses.length - 1][resRef.current]}</h2>
           :
           <h2>{responses[5][resRef.current]}</h2>
-
         }
 
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div id="gameOverGuessContainer">
           {guesses.map((g, idx) => {
 
-            if(g === targetSong.current.name) {
-              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "green"}}>✔️<span>{g}</span></div>
-             
-            } else if (g === "Skipped..."){
-              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "gray"}}>➖<span>{g}</span></div>
+            if (g === targetSong.current.name) {
+              return <div key={g + " " + idx} className='guessTile correctGuess' >✔️<span>{g}</span></div>
+
+            } else if (g === "Skipped...") {
+              return <div key={g + " " + idx} className='guessTile skippedGuess' >➖<span>{g}</span></div>
 
             } else {
-
-              return <div key= {g + " " + idx} className='guessTile' style={{ backgroundColor: "red"}}>❌<span>{g}</span></div>
+              return <div key={g + " " + idx} className='guessTile incorrectGuess' >❌<span>{g}</span></div>
 
             }
-
-          }
-          )}
+          })}
         </div>
 
         {/* <h3>Add to playlist</h3> */}
 
-        <h4 style={{ lineHeight: "2" }}>
+        <h4 id="addedByTo">
           Added by&nbsp;
-          <a href={userDict[targetSong.current.addedBy].profileUrl} target="_blank" className="addedByBadge"><img style={{ height: "25px", width: "25px", borderRadius: "15px" }} src={userDict[targetSong.current.addedBy].url} alt='spotifyProfileImg' /> <b>{userDict[targetSong.current.addedBy].name}</b></a>
+          <a href={userDict[targetSong.current.addedBy].profileUrl} target="_blank" className="addedByBadge selectable">
+            <img src={userDict[targetSong.current.addedBy].url} alt='spotifyProfileImg' />
+            <b>{userDict[targetSong.current.addedBy].name}</b>
+          </a>
+
           &nbsp;to
+          
           <br />
-          <a href={songDict[targetPlaylist.current].playlistUrl} target="_blank" className="addedByBadge"><img style={{ height: "20px", width: "20px", borderRadius: "2px" }} src={songDict[targetPlaylist.current].url} alt='spotifyPlaylistImg' /> <b>{targetPlaylist.current}</b></a>
+          <a href={songDict[targetPlaylist.current].playlistUrl} target="_blank" className="addedByBadge selectable">
+            <img src={songDict[targetPlaylist.current].url} alt='spotifyPlaylistImg' /> 
+            <b>{targetPlaylist.current}</b>
+          </a>
         </h4>
 
-        <button id='retryBtn' onClick={chooseNewSong}>New Song</button>
+        <button id='retryBtn' className="selectable" onClick={chooseNewSong}>New Song</button>
       </div>
     </div>
   )

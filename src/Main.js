@@ -102,7 +102,7 @@ export default function Main() {
   // Create HTML elements for each guess (and empty guesses)
   const renderedGuesses = useMemo(() => 
     Array(5).fill(null).map((_, i) => (
-      <h4 key={i} className='guessText' style={{ color: gameState.guesses[i] === "Skipped..." ? "var(--dull-accent-color)" : "red" }}>
+      <h4 key={i} className={`guessText ${gameState.guesses[i] === "Skipped..." ? "skippedGuess" : "incorrectGuess"}`} >
         {gameState.guesses[i] || "\u00A0"}
       </h4>
     )), 
@@ -169,7 +169,7 @@ export default function Main() {
             <SearchBar searchRef={submit_ref} items={searchItems} />
 
             <span className='submissionBar'>
-              <button id='skipBtn' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
+              <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
 
               <PlaylistSelect 
                 songDict={songDict} 
@@ -177,7 +177,7 @@ export default function Main() {
                 chooseNewSong={chooseNewSong}
               />
 
-              <button id='submitBtn' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
+              <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
             </span>
           </div>
 

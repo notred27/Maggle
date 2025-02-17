@@ -38,7 +38,7 @@ export default function SearchBar({ searchRef, items }) {
 
 
     return (
-        <div ref={menuRef} style={{ position: "relative" }}>
+        <div id = "searchBarContainer" ref={menuRef}>
 
             <div className="songSearchItem">
                 {filter !== "" && searchRef.current === document.activeElement && rows}
