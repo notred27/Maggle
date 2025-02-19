@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-maggle-dev-26d07-authRole",
+      "UnauthRoleArn": "arn:aws:iam::975049918172:role/amplify-maggle-dev-26d07-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::975049918172:role/amplify-maggle-dev-26d07-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-maggle-dev-26d07-deployment",
+      "UnauthRoleName": "amplify-maggle-dev-26d07-unauthRole",
+      "StackName": "amplify-maggle-dev-26d07",
+      "StackId": "arn:aws:cloudformation:us-east-2:975049918172:stack/amplify-maggle-dev-26d07/40972130-eef1-11ef-b475-0adb797fb541",
+      "AmplifyAppId": "d23cizuos89xgp"
+    },
+    "categories": {
+      "function": {
+        "todoFunction": {
+          "deploymentBucketName": "amplify-maggle-dev-26d07-deployment",
+          "s3Key": "amplify-builds/todoFunction-6d6d6e30685266495a38-build.zip"
+        }
+      },
+      "api": {
+        "maggleAPI": {}
+      }
+    }
+  }
+}

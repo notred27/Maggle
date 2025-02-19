@@ -1,0 +1,43 @@
+{
+  "api": {
+    "maggleAPI": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "todoFunction"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
+  "function": {
+    "todoFunction": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_todoFunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_todoFunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoFunction"
+        }
+      ]
+    }
+  }
+}
