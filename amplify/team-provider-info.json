@@ -16,6 +16,10 @@
         "todoFunction": {
           "deploymentBucketName": "amplify-maggle-dev-26d07-deployment",
           "s3Key": "amplify-builds/todoFunction-6d6d6e30685266495a38-build.zip"
+        },
+        "ProxyLambda": {
+          "deploymentBucketName": "amplify-maggle-dev-26d07-deployment",
+          "s3Key": "amplify-builds/ProxyLambda-48624639537079713479-build.zip"
         }
       },
       "api": {

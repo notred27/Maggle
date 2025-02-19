@@ -20,5 +20,6 @@
 - [ ] Create hist of guess times (e.g., how many times user guessed the song in 1 second, 2, ...) 
 - [ ] Average time to listen before correct answer?
 - [x] Fix Amplify env and change keys 
+- [x] Add amplify API to avoid CORS issues
 - [ ] make guest user for those without a spotify account (they can just use a search bar on the login screen to search for a user)
 - [ ] Mock more components for jest, and create new suites for other components

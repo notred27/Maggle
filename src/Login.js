@@ -1,38 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useToken from './hooks/useToken.js';
-import { post } from 'aws-amplify/api';
+
 
 
 export default function Login() {
 
-
-  async function postTodo() {
-    try {
-      const restOperation = post({
-        apiName: 'maggleAPI',
-        path: '/todo',
-        options: {
-          body: {
-            message: 'Mow the lawn'
-          }
-        }
-      });
-  
-      const { body } = await restOperation.response;
-      console.log(body)
-      const response = await body.json();
-  
-      console.log('POST call succeeded');
-      console.log(response);
-    } catch (e) {
-      console.log('POST call failed: ', JSON.parse(e.response.body));
-    }
-  }
-
-
-  const CLIENT_ID =  process.env.REACT_APP_CLIENT_ID;
-  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI; 
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
   const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
   const RESPONSE_TYPE = "token";
   const TIMEOUT = 3600000;
@@ -101,12 +76,10 @@ export default function Login() {
           <h1>Maggle!</h1>
           <h3>How well do you know your own playlists? Connect your Spotify account and find out!</h3>
           <br />
-          <a id ="SpotifyLoginLink" href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login with Spotify</a>
+          <a id="SpotifyLoginLink" href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login with Spotify</a>
         </div>
 
-        <button onClick={postTodo}>Test API</button>
-
-        <h3 id='CORSdisclaimer'>NOTICE: Due to technical difficulties (a.k.a. I do not want to pay for a backend server), you must have the "CORS Unblock" extension added and enabled to your browser in order to use this website. This extension can be downloaded <a href="https://chromewebstore.google.com/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino?hl=en">here</a>. Please make sure it is active (The "C" will be orange). Thank you! </h3>
+        
       </>
       :
       <>

@@ -7,6 +7,13 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/proxy": {
+      "name": "/proxy",
+      "lambdaFunction": "ProxyLambda",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }

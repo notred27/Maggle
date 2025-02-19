@@ -9,6 +9,14 @@
           ],
           "category": "function",
           "resourceName": "todoFunction"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "ProxyLambda"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -16,6 +24,11 @@
     }
   },
   "function": {
+    "ProxyLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "todoFunction": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -23,6 +36,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_ProxyLambda_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ProxyLambda"
+        }
+      ]
+    },
+    "AMPLIFY_function_ProxyLambda_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "ProxyLambda"
+        }
+      ]
+    },
     "AMPLIFY_function_todoFunction_deploymentBucketName": {
       "usedBy": [
         {

@@ -1,6 +1,9 @@
 
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { get } from 'aws-amplify/api';
+
+
 
 export default function useGameState(songDict) {
   const targetSong = useRef(null);
@@ -61,31 +64,46 @@ export default function useGameState(songDict) {
    * @returns A string containing the song's URL
    */
   async function getAudioPreview(query) {
-    const params = new URLSearchParams({ q: query.name });
+    try {
 
-    // Make the GET request
-    const response = await fetch(`https://api.deezer.com/search?${params.toString()}`);
-    // Parse and return the JSON response
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
 
-    const tracks = await response.json();
+      const params = new URLSearchParams({ q: query.name });
 
-    if (!query.name.toLowerCase().includes(tracks.data[0].title_short.toLowerCase())) {
-      console.error("Best result does not match target song. Skipping this song: ", query.name)
+      // Make the GET request
+      // const response = await fetch(`https://api.deezer.com/search?${params.toString()}`);
+
+      // Send a GET request to amplify API to act as a proxy since deezer doesn't have CORS set up
+      const response = get({
+        apiName: 'maggleAPI',
+        path: `/proxy?${params.toString()}`,
+      });
+
+      const { body } = await response.response;
+
+
+      const tracks = await body.json();
+
+      if (!query.name.toLowerCase().includes(tracks.data[0].title_short.toLowerCase())) {
+        console.error("Best result does not match target song. Skipping this song: ", query.name)
+        return null;
+      }
+
+      if (tracks.data.length === 0) {
+        console.error("No results were found. Skipping this song: ", query.name);
+        return null;
+
+      }
+
+
+      return tracks.data[0].preview;
+
+    } catch (error) {
+      console.error("An error occurred when searching for this song. Skipping this song: ", query.name);
+
       return null;
+
+      // throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    if (tracks.data.length === 0) {
-      console.error("No results were found. Skipping this song: ", query.name);
-      return null;
-
-    }
-
-    // console.log(tracks.data[0])
-
-    return tracks.data[0].preview;
   }
 
 
