@@ -1,9 +1,11 @@
 import useSound from "use-sound";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Gameover({ targetSong, targetPlaylist, userDict, songDict, guesses, chooseNewSong, gameOver, volume, audio }) {
-  const [play, { stop, pause }] = useSound(audio, { volume: volume });
   const resRef = useRef(0);
+  const fadeOutTimeout = useRef(null); // Store timeout reference
+  const [vol, setVol] = useState(volume); // Initial volume
+  const [play, { stop, pause }] = useSound(audio, { volume: vol });
 
 
   const responses = [["Incredible! You got it in one try!",
@@ -51,13 +53,37 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
     if (gameOver) {
       resRef.current = Math.round(Math.random() * 4);
       play(); // Play full song preview on game over
+
+      // Schedule fade-out after 28 seconds
+      fadeOutTimeout.current = setTimeout(() => {
+        fadeOut(); // Trigger fade-out function
+      }, 25000);
+
     } else {
       pause(); // Stop when component is not rendered
     }
 
-    return () => stop(); // Ensure sound stops when component unmounts
+    return () =>{ stop(); clearTimeout(fadeOutTimeout.current); }// Ensure sound stops when component unmounts
   }, [gameOver, play, pause]);
 
+
+  const fadeOut = () => {
+    let fadeDuration = 5000; // 2 seconds fade-out
+    let stepTime = 100; // Reduce volume every 100ms
+    let steps = fadeDuration / stepTime;
+    let volumeStep = vol / steps;
+
+    let interval = setInterval(() => {
+      setVol((prevVolume) => {
+        if (prevVolume <= 0.05) {
+          clearInterval(interval);
+          stop(); // Stop playback when volume is almost zero
+          return 0;
+        }
+        return prevVolume - volumeStep; // Decrease volume gradually
+      });
+    }, stepTime);
+  };
 
   return (
     <div className='gameoverContainer'>

@@ -17,6 +17,14 @@
           ],
           "category": "function",
           "resourceName": "ProxyLambda"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "getGuestToken"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -25,6 +33,11 @@
   },
   "function": {
     "ProxyLambda": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "getGuestToken": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
@@ -49,6 +62,22 @@
         {
           "category": "function",
           "resourceName": "ProxyLambda"
+        }
+      ]
+    },
+    "AMPLIFY_function_getGuestToken_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getGuestToken"
+        }
+      ]
+    },
+    "AMPLIFY_function_getGuestToken_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getGuestToken"
         }
       ]
     },

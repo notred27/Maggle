@@ -20,6 +20,10 @@
         "ProxyLambda": {
           "deploymentBucketName": "amplify-maggle-dev-26d07-deployment",
           "s3Key": "amplify-builds/ProxyLambda-48624639537079713479-build.zip"
+        },
+        "getGuestToken": {
+          "deploymentBucketName": "amplify-maggle-dev-26d07-deployment",
+          "s3Key": "amplify-builds/getGuestToken-576e332b664a6333334a-build.zip"
         }
       },
       "api": {

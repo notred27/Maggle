@@ -385,8 +385,29 @@
   background-color: var(--primary-btn-color);
   color: var(--primary-text-color);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 20px;
+  font-size: 1rem;
+
+  text-decoration: none;
+  font-weight: 600;
+  margin: 20px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+
 }
+
+#GuestLoginLink {
+  background-color: var(--secondary-btn-color);
+  color: var(--primary-text-color);
+  padding: 10px;
+  border-radius: 20px;
+  border: 0;
+  font-size: 1rem;
+  margin: 20px;
+  font-weight: 600;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 
 
 #CORSdisclaimer {

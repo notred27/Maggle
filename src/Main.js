@@ -135,7 +135,7 @@ export default function Main() {
 
         {profile !== null &&
           <ProfileBadge 
-            profileUrl={profile.images[1].url || 'play.svg'} 
+            profileUrl={profile.images[1].url} 
             displayName={profile.display_name}
             volume={volume} 
             setVolume={setVolume} 
