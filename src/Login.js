@@ -4,14 +4,13 @@ import useToken from './hooks/useToken.js';
 import { get } from 'aws-amplify/api';
 
 
-
 export default function Login() {
 
   const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
   const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
   const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
   const RESPONSE_TYPE = "token";
-  const TIMEOUT = 3600000;
+  const TIMEOUT = 1800000;
 
 
   const { setToken, getToken } = useToken();
@@ -62,22 +61,21 @@ export default function Login() {
 
   async function loginAsGuest() {
 
+    try {
+      const op = get({
+        apiName: 'maggleAPI',
+        path: '/guest-token',
+      });
 
-    const response = get({
-      apiName: 'maggleAPI',
-      path: `/guest-token`,
-    });
+      const { body } = await op.response;  // <-- This is correct
+      const token = await body.json();
 
-    const { body } = await response.response;
+      setToken(token.access_token, TIMEOUT);
+      nav('/guest/');
+    } catch (err) {
+      console.error("Failed to load guest token", err);
+    }
 
-
-    const token = await body.json();
-
-
-    setToken(token.access_token, TIMEOUT); 
-
-
-    nav('/guest/');
   }
 
 
@@ -92,14 +90,18 @@ export default function Login() {
 
   return (<div>
     {!getToken() ?
-      <div>
+      <div style={{minHeight:"100vh", justifyContent:"center", display:"flex", flexDirection:"column"}}>
         <div>
           <h1>Maggle!</h1>
-          <h3>How well do you know your own playlists? Connect your Spotify account and find out!</h3>
+          <h2>How well do you know your own playlists?</h2>
+          <p>Connect your Spotify account and find out!</p>
           <br />
-          <a id="SpotifyLoginLink" className='selectable' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login with Spotify (BETA)</a>
-          <br />
-          <button id="GuestLoginLink" className='selectable' onClick={loginAsGuest}>Login as guest</button>
+          <div style={{display:"flex", justifyContent:"center", flexWrap:"wrap"}}>
+
+            <a id="SpotifyLoginLink" className='selectable' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Sign In With Spotify</a>
+            
+            <button id="GuestLoginLink" className='selectable' onClick={loginAsGuest}>Continue As Guest</button>
+          </div>
         </div>
 
 

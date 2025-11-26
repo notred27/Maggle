@@ -11,6 +11,10 @@ export default function Guest() {
     const nav = useNavigate();
     const inputRef = useRef(null);
 
+    const [isDropped, setIsDropped] = useState(false);
+
+    const hintRef = useRef(null)
+
     /**
      * Clear the token on logout
      */
@@ -34,36 +38,53 @@ export default function Guest() {
         if (data.ok) {
             nav(`/${inputRef.current.value}`)
         } else {
-            setMessage(`There doesn't appear to be any Spotify with id "${inputRef.current.value}". Please ensure that the id you entered is correct.`)
+            setMessage(`No user with Spotify id "${inputRef.current.value}" was found. Please ensure that the id you entered is correct.`)
         }
     }
 
 
     return (
         <div>
-            <h2>Please enter the target profile:</h2>
+            <h2>Please enter your target profile:</h2>
+
+
+
+
+            <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+                <input ref={inputRef} placeholder="Spotify ID" style={{ padding: "10px 8px", border: "0px", borderRadius: "2px" }} />
+                <button id="SpotifyLoginLink" onClick={redirectToMain} style={{ margin: "0px", height: "40px" }}>Search</button>
+            </div>
 
             <br />
-          
+
+
+
+            <button id="GuestLoginLink" onClick={logout}>Back to Home</button>
+
+            <br />
             {message}
             <br />
 
 
-            <input ref={inputRef} placeholder="Spotify ID" />
-            <button onClick={redirectToMain}>Go</button>
+            <span className='dropdownMenu' ref={hintRef}>
+                <button onClick={() => setIsDropped(!isDropped)}>How can I find my profile? </button>
+
+                {isDropped &&
+                    <div>
+                        <p>
+                            To find your profile id, copy the link to your profile and paste the name between "/user/" and "?".
+                        </p>
+                        <p>
+
+                            For example, my share link is <span style={{ opacity: "0.6" }}>"https://open.spotify.com/user/</span>jd76h9cddqc2heszq1eyjhl52<span style={{ opacity: "0.6" }}>?si=5a800d24db6b4523"</span>,
+                            so I would paste <span style={{ fontWeight: "bold" }}>jd76h9cddqc2heszq1eyjhl52</span>.
+                        </p>
+                    </div>
+                }
+            </span>
 
 
-            <br />
-            <br />
 
-            <button onClick={logout}>Back</button>
-
-
-            <br />
-
-            <h3>To find your own profile id, copy the link to your profile and paste the name between "/user/" and "?".
-            For example, my share link is "https://open.spotify.com/user/jd76h9cddqc2heszq1eyjhl52?si=5a800d24db6b4523",
-            so I would paste "jd76h9cddqc2heszq1eyjhl52". </h3>
 
         </div>
     )

@@ -124,24 +124,7 @@ export default function Main() {
   return (
     <div className="App">
 
-      <header className='appHeader'>
-        <span className='streakText'>
-          Current Streak: {gameState.score}
-          <br />
-          Best Streak: {gameState.bestScore}
-        </span>
 
-        <h1 className='noselect'>Maggle!</h1>
-
-        {profile !== null &&
-          <ProfileBadge 
-            profileUrl={profile.images[1].url} 
-            displayName={profile.display_name}
-            volume={volume} 
-            setVolume={setVolume} 
-          />
-        }
-      </header>
 
       {!gameState.gameOver && <div className='guessContainer' > {renderedGuesses} </div>}
 
