@@ -1,16 +1,15 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import SearchBar from './assets/SearchBar.js';
 import PlayButton from './assets/PlayButton.js';
 import Gameover from './Gameover';
 import PlaylistSelect from './assets/PlaylistSelect.js';
-import ProfileBadge from './assets/ProfileBadge.js'
 
 
 
 
 import usePlaylists from './hooks/usePlaylists.js';
 import useGameState from './hooks/useGameState.js';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useToken from './hooks/useToken.js';
 import useSpotifyProfile from './hooks/useSpotifyProfile';
 import ProgressBar from './assets/ProgressBar.js';

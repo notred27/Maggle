@@ -36,7 +36,7 @@ body {
 
 
 #LandingPage {
-  background: url('./../assets/horizontal-splash.PNG') no-repeat center center/cover;
+  background: url('./../assets/horizontal-splash.png') no-repeat center center/cover;
   background-color: rgba(0, 0, 0, 0.75);
   background-blend-mode: darken;
   /* height: 80vh; */
@@ -525,7 +525,7 @@ footer {
 
 
   #LandingPage {
-    background: url('./../assets/splash.PNG') no-repeat center center/cover;
+    background: url('./../assets/splash.png') no-repeat center center/cover;
 background-color: rgba(0, 0, 0, 0.75);
   background-blend-mode: darken;
     padding: 20px;

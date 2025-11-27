@@ -9,7 +9,7 @@ export default function usePlaylists(profile) {
   const [userDict, setUserDict] = useState({});
 
   const [isLoaded, setIsLoaded] = useState(false);
-  const {setToken, getToken} = useToken();
+  const {_, getToken} = useToken();
 
   /**
    * Query Spotify's API for a list of different users
