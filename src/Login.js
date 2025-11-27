@@ -6,115 +6,116 @@ import { get } from 'aws-amplify/api';
 
 export default function Login() {
 
-  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-  const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
-  const RESPONSE_TYPE = "token";
-  const TIMEOUT = 1800000;
+    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+    const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+    const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
+    const RESPONSE_TYPE = "token";
+    const TIMEOUT = 1800000;
 
 
-  const { setToken, getToken } = useToken();
-  const nav = useNavigate();
-  const { uid } = useParams();
+    const { setToken, getToken } = useToken();
+    const nav = useNavigate();
+    const { uid } = useParams();
 
-  const [storedUid, setStoredUid] = useState(localStorage.getItem("uid") || "");
-  useEffect(() => {
-    if (uid) {
-      localStorage.setItem("uid", uid);
-      setStoredUid(uid);
+    const [storedUid, setStoredUid] = useState(localStorage.getItem("uid") || "");
+    useEffect(() => {
+        if (uid) {
+            localStorage.setItem("uid", uid);
+            setStoredUid(uid);
+        }
+    }, [uid]);
+
+
+
+    /**
+     * After redirect, try to extract and save the response token if auth was successful
+     */
+    useEffect(() => {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const token = hashParams.get("access_token");
+
+        if (token && !getToken()) {
+            setToken(token, TIMEOUT);
+            window.location.hash = ""; // Clear hash
+        }
+    }, [setToken]);
+
+
+
+    /**
+     * If you already have an auth token, go to the target user
+     */
+    useEffect(() => {
+        if (getToken()) {
+
+            if (storedUid) {
+                window.localStorage.removeItem("uid");
+                nav(`/${storedUid}`);
+            } else {
+                // nav(`/${profile.id}`);  // Redirect to logged-in user's page after profile has loaded
+                nav(`/`);
+            }
+        }
+    }, [nav, getToken]);
+
+
+    async function loginAsGuest() {
+
+        try {
+            const op = get({
+                apiName: 'maggleAPI',
+                path: '/guest-token',
+            });
+
+            const { body } = await op.response;  // <-- This is correct
+            const token = await body.json();
+
+            setToken(token.access_token, TIMEOUT);
+            nav('/guest/');
+        } catch (err) {
+            console.error("Failed to load guest token", err);
+        }
+
     }
-  }, [uid]);
 
 
+    /**
+     * Clear the token on logout
+     */
+    const logout = () => {
+        setToken("", 0);
 
-  /**
-   * After redirect, try to extract and save the response token if auth was successful
-   */
-  useEffect(() => {
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const token = hashParams.get("access_token");
-
-    if (token && !getToken()) {
-      setToken(token, TIMEOUT);
-      window.location.hash = ""; // Clear hash
-    }
-  }, [setToken]);
-
-
-
-  /**
-   * If you already have an auth token, go to the target user
-   */
-  useEffect(() => {
-    if (getToken()) {
-
-      if (storedUid) {
-        window.localStorage.removeItem("uid");
-        nav(`/${storedUid}`);
-      } else {
-        // nav(`/${profile.id}`);  // Redirect to logged-in user's page after profile has loaded
-        nav(`/`);
-      }
-    }
-  }, [nav, getToken]);
-
-
-  async function loginAsGuest() {
-
-    try {
-      const op = get({
-        apiName: 'maggleAPI',
-        path: '/guest-token',
-      });
-
-      const { body } = await op.response;  // <-- This is correct
-      const token = await body.json();
-
-      setToken(token.access_token, TIMEOUT);
-      nav('/guest/');
-    } catch (err) {
-      console.error("Failed to load guest token", err);
     }
 
-  }
+
+    return (<>
+        {!getToken() ?
+            <div id='LandingPage' style={{ justifyContent: "center", display: "flex", flexDirection: "column", height: "100%" }}>
+                <div>
+                    {/* <h1>Maggle!</h1> */}
+                    <span id='landingText'>
+                        <h1>How well do you know <span style={{ fontWeight: "bold", fontStyle: "italic", textDecoration: "underline" }}>your own</span> playlists?</h1>
+                        <p>Connect your Spotify account to <span style={{ fontWeight: "bold", fontStyle: "italic" }}>Maggle</span> and find out today!</p>
+                    </span>
+                    <div className="landingBtnContainer" >
+
+                        <a id="SpotifyLoginLink" className='selectable' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Sign In With Spotify <span style={{ fontSize: "x-small", fontWeight: "bold" }}>(BETA)</span></a>
+
+                        <button id="GuestLoginLink" className='selectable' onClick={loginAsGuest}>Continue As Guest</button>
+                    </div>
+                </div>
 
 
-  /**
-   * Clear the token on logout
-   */
-  const logout = () => {
-    setToken("", 0);
+            </div>
+            :
+            <>
+                <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
+                <div>
+                    <button onClick={logout}>I understand</button>
 
-  }
-
-
-  return (<div>
-    {!getToken() ?
-      <div style={{minHeight:"100vh", justifyContent:"center", display:"flex", flexDirection:"column"}}>
-        <div>
-          <h1>Maggle!</h1>
-          <h2>How well do you know your own playlists?</h2>
-          <p>Connect your Spotify account and find out!</p>
-          <br />
-          <div style={{display:"flex", justifyContent:"center", flexWrap:"wrap"}}>
-
-            <a id="SpotifyLoginLink" className='selectable' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Sign In With Spotify</a>
-            
-            <button id="GuestLoginLink" className='selectable' onClick={loginAsGuest}>Continue As Guest</button>
-          </div>
-        </div>
-
-
-      </div>
-      :
-      <>
-        <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
-        <div>
-          <button onClick={logout}>I understand</button>
-
-        </div>
-      </>
-    }
-  </div>);
+                </div>
+            </>
+        }
+    </>);
 }
 

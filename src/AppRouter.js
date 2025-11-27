@@ -1,6 +1,6 @@
 import Main from "./Main";
 import Login from "./Login";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Guest from "./Guest";
 import AppHeader from "./assets/AppHeader";
 
@@ -26,13 +26,13 @@ export default function AppRouter() {
   const { profile, getProfile, setProfile } = useSpotifyProfile();
   const { setToken } = useToken();
 
-  const location = useLocation();
-  const hideHeader = location.pathname.startsWith("/login");
+  // const location = useLocation();
+  // const hideHeader = location.pathname.startsWith("/login");
 
   // update useSpotifyProfile when access token is granted / page navigation changes
   useEffect(() => {
     getProfile();
-  }, [nav]);
+  }, [nav, getProfile]);
 
   function logOut() {
     setToken("", 0);
@@ -42,18 +42,22 @@ export default function AppRouter() {
 
   return (
     <div className="App">
-      {!hideHeader &&
         <AppHeader profile={profile} logOut={logOut} nav={nav}></AppHeader>
-    
-      }
+     
+     <main style={{flex: "1 1 auto", display:"flex", flexDirection:"column"}}>
 
-      
+    
       <Routes>
         <Route path="/:uid?" element={<Main />} />
         <Route path="/guest/:uid?" element={<Guest />} />
 
         <Route path="/login/:uid?" element={<Login />} />
       </Routes>
+       </main>
+
+      <footer style={{flex: "0 1 40px"}}>
+        {/* Made with React. */}
+      </footer>
     </div>
   )
 }

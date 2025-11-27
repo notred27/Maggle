@@ -18,160 +18,160 @@ import ProgressBar from './assets/ProgressBar.js';
 
 export default function Main() {
 
-  const { uid } = useParams();
-  const { profile, getProfile } = useSpotifyProfile();
+    const { uid } = useParams();
+    const { profile, getProfile } = useSpotifyProfile();
 
-  const nav = useNavigate();
+    const nav = useNavigate();
 
-  const [targetProfile, setTargetProfile] = useState(null);
-  const { songDict, searchItems, userDict, getPlaylists, isLoaded } = usePlaylists(profile);
-  const { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, setPbarValue } = useGameState(songDict);
-  const submit_ref = useRef(null);
-  const [volume, setVolume] = useState(0.5);
-  const { setToken, getToken } = useToken();
+    const [targetProfile, setTargetProfile] = useState(null);
+    const { songDict, searchItems, userDict, getPlaylists, isLoaded } = usePlaylists(profile);
+    const { gameState, chooseNewSong, targetSong, targetPlaylist, fixedPlaylist, nextGuess, setPbarValue } = useGameState(songDict);
+    const submit_ref = useRef(null);
+    const [volume, setVolume] = useState(0.5);
+    const { setToken, getToken } = useToken();
 
 
-  /**
-   * Get the correct playlists for when a target user changes
-   */
-  useEffect(() => {
-    if (targetProfile) {
-      getPlaylists(targetProfile);
+    /**
+     * Get the correct playlists for when a target user changes
+     */
+    useEffect(() => {
+        if (targetProfile) {
+            getPlaylists(targetProfile);
+        }
+    }, [targetProfile])
+
+
+    /**
+      * Check if the user is logged in, and get their profile if they are. Otherwise redirect to login if token has expired
+      */
+    useEffect(() => {
+        if (!getToken()) {
+            nav('/login'); // Redirect if no token, or if token expired
+            return;
+        }
+
+        getProfile();
+
+    }, [nav]);
+
+
+    /**
+     * Redirect when base user is not specified in the url (on initial redirect from login)
+     */
+    useEffect(() => {
+        if (profile && uid === undefined) {
+            nav(`/login/${profile.id}`);
+            return;
+        }
+
+    }, [profile, uid, nav]);
+
+
+    /**
+     * Get info about the user's songs after their info has been loaded.
+     */
+    useEffect(() => {
+        if (profile) {
+            if (uid === profile.id) {
+                setTargetProfile(profile.id);
+
+            } else {
+                setTargetProfile(uid);
+            }
+
+        }
+    }, [profile]);
+
+
+
+
+
+    /**
+     * Choose a new song if all data has been fetched form Spotify (profile and playlists)
+     */
+    useEffect(() => {
+        if (profile && songDict && Object.keys(songDict).length > 0) {
+            chooseNewSong();
+        }
+    }, [searchItems, chooseNewSong, songDict, profile]);
+
+
+
+
+
+    // Create HTML elements for each guess (and empty guesses)
+    const renderedGuesses = useMemo(() =>
+        Array(5).fill(null).map((_, i) => (
+            <h4 key={i} className={`guessText ${gameState.guesses[i] === "Skipped..." ? "skippedGuess" : "incorrectGuess"}`} >
+                {gameState.guesses[i] || "\u00A0"}
+            </h4>
+        )),
+        [gameState.guesses]
+    );
+
+    // Return a dummy version of this page until the user's details have been received
+    if (!profile) {
+        return <div className="App"><h2>Loading...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
     }
-  }, [targetProfile])
-
-  
-  /**
-    * Check if the user is logged in, and get their profile if they are. Otherwise redirect to login if token has expired
-    */
-  useEffect(() => {
-    if (!getToken()) {
-      nav('/login'); // Redirect if no token, or if token expired
-      return;
-    }
-
-    getProfile();
-
-  }, [nav]);
 
 
-  /**
-   * Redirect when base user is not specified in the url (on initial redirect from login)
-   */
-  useEffect(() => {
-    if (profile && uid === undefined) {
-      nav(`/login/${profile.id}`);
-      return;
-    }
-
-  }, [profile, uid, nav]);
-
-
-  /**
-   * Get info about the user's songs after their info has been loaded.
-   */
-  useEffect(() => {
-    if (profile) {
-      if (uid === profile.id) {
-        setTargetProfile(profile.id);
-
-      } else {
-        setTargetProfile(uid);
-      }
+    if (!isLoaded) {
+        return <div className="App"><h2>Retrieving {targetProfile}'s Playlists...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
 
     }
-  }, [profile]);
+
+    // Return the main page for the app
+    return (
+        <>
 
 
- 
-
-
-  /**
-   * Choose a new song if all data has been fetched form Spotify (profile and playlists)
-   */
-  useEffect(() => {
-    if (profile && songDict && Object.keys(songDict).length > 0) {
-      chooseNewSong();
-    }
-  }, [searchItems, chooseNewSong, songDict, profile]);
+{/* 
+            {!gameState.gameOver &&} */}
 
 
 
+            {!gameState.gameOver && <>
+
+ <div className='guessContainer' style={{flex:"1 1 auto"}}> {renderedGuesses} </div>
+
+                <div className='guessControlContainer' style={{flex:"0 1 auto"}}>
+
+                    <div >
+                        <ProgressBar state={gameState} >
+
+                            <PlayButton
+                                audioUrl={gameState.audioUrl}
+                                volume={volume}
+                                maxPlaybackLength={gameState.maxPlaybackLength}
+                                inputVal={setPbarValue}
+                            />
+
+                        </ProgressBar>
 
 
-  // Create HTML elements for each guess (and empty guesses)
-  const renderedGuesses = useMemo(() => 
-    Array(5).fill(null).map((_, i) => (
-      <h4 key={i} className={`guessText ${gameState.guesses[i] === "Skipped..." ? "skippedGuess" : "incorrectGuess"}`} >
-        {gameState.guesses[i] || "\u00A0"}
-      </h4>
-    )), 
-    [gameState.guesses]
-  );
+                        <SearchBar searchRef={submit_ref} items={searchItems} />
 
-  // Return a dummy version of this page until the user's details have been received
-  if (!profile) {
-    return <div className="App"><h2>Loading...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
-  }
+                        <span className='submissionBar'>
+                            <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
 
+                            <PlaylistSelect
+                                songDict={songDict}
+                                fixedPlaylist={fixedPlaylist}
+                                chooseNewSong={chooseNewSong}
+                            />
 
-  if (!isLoaded) {
-    return <div className="App"><h2>Retrieving {targetProfile}'s Playlists...</h2><div><button onClick={() => { setToken("", 0); nav("/login") }}>Logout</button></div></div>;
+                            <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
+                        </span>
+                    </div>
 
-  }
-
-  // Return the main page for the app
-  return (
-    <div className="App">
+                </div>
 
 
+            </>
+            }
 
-      {!gameState.gameOver && <div className='guessContainer' > {renderedGuesses} </div>}
-
-
-
-
-      {!gameState.gameOver && <>
-
-
-        <div className='guessControlContainer'>
-
-          <div>
-            <ProgressBar state={gameState} >
-              
-              <PlayButton
-                audioUrl={gameState.audioUrl}
-                volume={volume}
-                maxPlaybackLength={gameState.maxPlaybackLength}
-                inputVal={setPbarValue}
-              />
-            
-            </ProgressBar>
-
-
-            <SearchBar searchRef={submit_ref} items={searchItems} />
-
-            <span className='submissionBar'>
-              <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
-
-              <PlaylistSelect 
-                songDict={songDict} 
-                fixedPlaylist={fixedPlaylist}
-                chooseNewSong={chooseNewSong}
-              />
-
-              <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
-            </span>
-          </div>
-
-        </div>
-
-
-      </>
-      }
-
-      {gameState.gameOver && <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={gameState.guesses} chooseNewSong={chooseNewSong} gameOver={gameState.gameOver} volume={volume} audio={gameState.audioUrl} />}
-    </div>
-  );
+            {gameState.gameOver && <Gameover targetSong={targetSong} targetPlaylist={targetPlaylist} userDict={userDict} songDict={songDict} guesses={gameState.guesses} chooseNewSong={chooseNewSong} gameOver={gameState.gameOver} volume={volume} audio={gameState.audioUrl} />}
+        </>
+    );
 }
 

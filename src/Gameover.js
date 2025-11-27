@@ -87,14 +87,15 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
 
   return (
     <div className='gameoverContainer'>
-      <div className="gameOverAlbum">
+      <div style={{minWidth:"200px"}} className="gameOverAlbum">
         <img src={targetSong.current.imgUrl} alt='albumCover' />
-        <h2>{targetSong.current.name.split(" - ")[0]}</h2>
-        <h4>{targetSong.current.name.split(" - ")[1]}</h4>
+        <h3 style={{margin:"10px"}}>{targetSong.current.name.split(" - ")[0]} <i class="fa fa-external-link" aria-hidden="true"></i>
+</h3>
+        <p style={{margin:"0px"}}>{targetSong.current.name.split(" - ")[1]}</p>
       </div>
 
 
-      <div className='gameoverInfo'>
+      <div className='gameoverInfo' style={{minWidth:"340px"}}>
 
         {guesses[guesses.length - 1] === targetSong.current.name ?
           <h2>{responses[guesses.length - 1][resRef.current]}</h2>
@@ -106,13 +107,13 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
           {guesses.map((g, idx) => {
 
             if (g === targetSong.current.name) {
-              return <div key={g + " " + idx} className='guessTile correctGuess' >✔️<span>{g}</span></div>
+              return <div key={g + " " + idx} className='guessTile correctGuess' ><span>{g}</span></div>
 
             } else if (g === "Skipped...") {
-              return <div key={g + " " + idx} className='guessTile skippedGuess' >➖<span>{g}</span></div>
+              return <div key={g + " " + idx} className='guessTile skippedGuess' ><span>{g}</span></div>
 
             } else {
-              return <div key={g + " " + idx} className='guessTile incorrectGuess' >❌<span>{g}</span></div>
+              return <div key={g + " " + idx} className='guessTile incorrectGuess' ><span>{g}</span></div>
 
             }
           })}
