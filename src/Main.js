@@ -123,19 +123,15 @@ export default function Main() {
     return (
         <>
 
+            {!gameState.gameOver && 
+            <>
+                <div className='guessContainer' style={{ flex: "1 1 auto" }}>
+                    {renderedGuesses}
+                </div>
 
-{/* 
-            {!gameState.gameOver &&} */}
+                <div className='guessControlContainer' style={{ flex: "0 1 auto" }}>
 
-
-
-            {!gameState.gameOver && <>
-
- <div className='guessContainer' style={{flex:"1 1 auto"}}> {renderedGuesses} </div>
-
-                <div className='guessControlContainer' style={{flex:"0 1 auto"}}>
-
-                    <div >
+                    <div style={{minWidth:"300px", display:"flex", flexDirection:"column", justifyContent:"center", position:"relative"}}>
                         <ProgressBar state={gameState} >
 
                             <PlayButton
@@ -150,7 +146,7 @@ export default function Main() {
 
                         <SearchBar searchRef={submit_ref} items={searchItems} />
 
-                        <span className='submissionBar'>
+                        <div className='submissionBar'>
                             <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
 
                             <PlaylistSelect
@@ -160,7 +156,7 @@ export default function Main() {
                             />
 
                             <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
-                        </span>
+                        </div>
                     </div>
 
                 </div>

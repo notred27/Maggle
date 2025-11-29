@@ -64,16 +64,17 @@ body {
 
 
 .searchInput {
-  width: 40vw;
+  /* width: 40vw; */
+  width: 90%;
   height: 2em;
 }
 
 .songSearchItem {
   position: absolute;
-  left: 10px;
+  left: 0px;
   bottom: 30px;
   background-color: white;
-  width: 40vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -150,6 +151,12 @@ footer {
   margin-left: auto;
   margin-right: auto;
   height: fit-content;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+  min-width: 300px;
 }
 
 .guessText {
@@ -159,6 +166,7 @@ footer {
   border-radius: 5px;
   margin: 5px;
   background-color: var(--page-background-color) !important;
+  min-width: 300px;
 }
 
 .submissionBar {
@@ -167,7 +175,8 @@ footer {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 10px;
+  padding: 10px;
+  margin: 0px;
 }
 
 
@@ -426,6 +435,7 @@ footer {
   background: var(--dynamic-grad);
   outline: none;
   margin-top: 15px;
+  width: 100%;
 }
 
 
@@ -563,5 +573,19 @@ background-color: rgba(0, 0, 0, 0.75);
 
   #profileBadgeMobileName {
     display: block;
+  }
+
+  .gameOverAlbum img {
+  width: 180px;
+}
+
+  .gameoverInfo {
+    height: fit-content;
+    margin-top: 50px;
+    max-width: 280px;
+  }
+
+  #retryBtn {
+    margin-top: 20px;
   }
 }

@@ -86,7 +86,7 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
   };
 
   return (
-    <div className='gameoverContainer'>
+    <div className='gameoverContainer' style={{minHeight:"fit-content"}}>
       <div style={{minWidth:"200px"}} className="gameOverAlbum">
         <img src={targetSong.current.imgUrl} alt='albumCover' />
         <h3 style={{margin:"10px"}}>{targetSong.current.name.split(" - ")[0]} <i class="fa fa-external-link" aria-hidden="true"></i>
@@ -128,16 +128,16 @@ export default function Gameover({ targetSong, targetPlaylist, userDict, songDic
             <b>{userDict[targetSong.current.addedBy].name}</b>
           </a>
 
-          &nbsp;to
+          &nbsp;to&nbsp;
           
-          <br />
+          {/* <br /> */}
           <a href={songDict[targetPlaylist.current].playlistUrl} target="_blank" className="addedByBadge selectable">
             <img src={songDict[targetPlaylist.current].url} alt='spotifyPlaylistImg' /> 
             <b>{targetPlaylist.current}</b>
           </a>
         </h4>
 
-        <button id='retryBtn' className="selectable" onClick={chooseNewSong}>New Song</button>
+        <button id='retryBtn' className="selectable" onClick={chooseNewSong}>Next Song</button>
       </div>
     </div>
   )
