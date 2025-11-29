@@ -42,22 +42,37 @@ export default function AppRouter() {
 
   return (
     <div className="App">
-        <AppHeader profile={profile} logOut={logOut} nav={nav}></AppHeader>
-     
-     <main style={{flex: "1 1 auto", display:"flex", flexDirection:"column"}}>
+      <AppHeader profile={profile} logOut={logOut} nav={nav}></AppHeader>
 
-    
-      <Routes>
-        <Route path="/:uid?" element={<Main />} />
-        <Route path="/guest/:uid?" element={<Guest />} />
+      <main style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", minHeight: "90vh" }}>
 
-        <Route path="/login/:uid?" element={<Login />} />
-      </Routes>
-       </main>
 
-      <footer style={{flex: "0 1 40px"}}>
+        <Routes>
+          <Route path="/:uid?" element={<Main />} />
+          <Route path="/guest/:uid?" element={<Guest />} />
+
+          <Route path="/login/:uid?" element={<Login />} />
+          <Route path="/about" element={<Login />} />
+
+        </Routes>
+      </main>
+
+      <footer style={{ flex: "0 1 40px", display: "flex", flexDirection: "column", textAlign: "left", padding: "40px", fontWeight: "bold", gap:"10px"}}>
         {/* Made with React. */}
+
+        <a href="/about" style={{ color: "white", textDecoration: "none" }}>ABOUT</a>
+
+        {profile === null ?
+          <a href="/login" style={{ color: "white", textDecoration: "none" }}>LOGIN</a>
+          :
+          <a onClick={() => logOut()} href="/login" style={{ color: "white", textDecoration: "none" }}>LOGOUT</a>
+        }
+
+        <a href="https://ko-fi.com/notred27" style={{ color: "white", textDecoration: "none" }}>SUPPORT US</a>
+
+
       </footer>
+
     </div>
   )
 }

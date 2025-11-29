@@ -131,7 +131,7 @@ export default function Main() {
 
                 <div className='guessControlContainer' style={{ flex: "0 1 auto" }}>
 
-                    <div style={{minWidth:"300px", display:"flex", flexDirection:"column", justifyContent:"center", position:"relative"}}>
+                    <div style={{maxWidth:"600px", width:"90vw", display:"flex", flexDirection:"column", justifyContent:"center", position:"relative"}}>
                         <ProgressBar state={gameState} >
 
                             <PlayButton
@@ -146,8 +146,8 @@ export default function Main() {
 
                         <SearchBar searchRef={submit_ref} items={searchItems} />
 
-                        <div className='submissionBar'>
-                            <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>Skip (+{gameState.maxPlaybackLength / 1000}s)</button>
+                        <div className='submissionBar' id='songSearchContainer'>
+                            <button id='skipBtn' className='selectable' onClick={() => nextGuess(null, searchItems)}>SKIP <span style={{fontSize: "x-small", fontWeight: "bold" }}>(+{gameState.maxPlaybackLength / 1000}s)</span></button>
 
                             <PlaylistSelect
                                 songDict={songDict}
@@ -155,7 +155,7 @@ export default function Main() {
                                 chooseNewSong={chooseNewSong}
                             />
 
-                            <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>Submit</button>
+                            <button id='submitBtn' className='selectable' onClick={() => nextGuess(submit_ref.current, searchItems)}>SUBMIT</button>
                         </div>
                     </div>
 

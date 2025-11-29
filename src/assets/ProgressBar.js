@@ -50,15 +50,15 @@ export default function ProgressBar({ children, state }) {
 
     return (
         <>
-            <input id='trackProgress' type='range' value={state.pbarValue} min={0} max={1600} step={1} disabled style={{background:`${gradient}`}} />
- 
-                <div className='submissionBar' style={{width:"100%"}}>
-                    <span className='noselect'>0:{String(Math.floor(state.pbarValue / 100 + 0.1)).padStart(2, '0')}</span>
+            <input id='trackProgress' type='range' value={state.pbarValue} min={0} max={1600} step={1} disabled style={{ background: `${gradient}` }} />
 
-                    {children}
+            <div className='submissionBar' style={{ width: "100%" }}>
+                <span className='noselect'>0:{String(Math.floor(state.pbarValue / 100 + 0.1)).padStart(2, '0')}</span>
 
-                    <span className='noselect'>0:{String(state.maxPlaybackLength / 1000).padStart(2, '0')}</span>
-                </div>
+                {children}
+
+                <span className='noselect'>0:{String(state.maxPlaybackLength / 1000).padStart(2, '0')}</span>
+            </div>
 
 
         </>
