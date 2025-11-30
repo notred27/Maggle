@@ -1,12 +1,18 @@
-import { useRef, useState } from "react";
-import useToken from "./hooks/useToken";
+import { useRef, useState, useEffect } from "react";
+
 import { useNavigate } from 'react-router-dom';
 
-
-
+import { GUEST_PROFILE } from "./contexts/SessionContext";
+import { useSession } from "./contexts/SessionContext";
 
 export default function Guest() {
-    const { setToken, getToken } = useToken();
+    const { profile, logout, accessToken} = useSession();
+
+
+
+
+
+    // const { setToken, getToken } = useToken();
     const [message, setMessage] = useState("");
     const nav = useNavigate();
     const inputRef = useRef(null);
@@ -15,13 +21,22 @@ export default function Guest() {
 
     const hintRef = useRef(null)
 
+
+    useEffect(() => {
+        if (profile?.display_name !== GUEST_PROFILE.display_name) {
+            nav("/");
+        }
+    }, [profile, nav]);
+
+
+
     /**
      * Clear the token on logout
      */
-    const logout = () => {
-        setToken("", 0);
-        nav("/login");
-    }
+    // const logout = () => {
+    //     setToken("", 0);
+    //     nav("/login");
+    // }
 
 
     async function redirectToMain() {
@@ -29,7 +44,7 @@ export default function Guest() {
         // Check that the profile exists
         const response = await fetch(`https://api.spotify.com/v1/users/${inputRef.current.value}`, {
             headers: {
-                Authorization: 'Bearer ' + getToken()
+                Authorization: 'Bearer ' + accessToken
             }
         });
 
@@ -38,13 +53,13 @@ export default function Guest() {
         if (data.ok) {
             nav(`/${inputRef.current.value}`)
         } else {
-            setMessage(`No user with Spotify id "${inputRef.current.value}" was found. Please ensure that the id you entered is correct.`)
+        setMessage(`No user with Spotify id "${inputRef.current.value}" was found. Please ensure that the id you entered is correct.`)
         }
     }
 
 
     return (
-        <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between", height:"100%"}}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
             <div>
                 <h2>Please enter your target profile:</h2>
 

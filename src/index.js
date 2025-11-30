@@ -12,16 +12,16 @@ import './styles/App.css';
 import { Amplify } from 'aws-amplify';
 import amplifyconfig from './amplifyconfiguration.json';
 
+import SessionProvider from "./contexts/SessionContext";
+
 Amplify.configure(amplifyconfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
+    <SessionProvider>
     <AppRouter />
+
+    </SessionProvider>
   </BrowserRouter>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// reportWebVitals(console.log);

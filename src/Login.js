@@ -1,121 +1,32 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import useToken from './hooks/useToken.js';
-import { get } from 'aws-amplify/api';
+import { useSession } from './contexts/SessionContext.js';
+import { GUEST_PROFILE } from './contexts/SessionContext.js';
+
+import { useEffect } from 'react';
+
+export default function Login({nav}) {
+
+    const { profile, login, handleGuestLogin } = useSession();
 
 
-export default function Login() {
-
-    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-    const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-    const AUTH_ENDPOINT = process.env.REACT_APP_AUTH_ENDPOINT;
-    const RESPONSE_TYPE = "token";
-    const TIMEOUT = 1800000;
-
-
-    const { setToken, getToken } = useToken();
-    const nav = useNavigate();
-    const { uid } = useParams();
-
-    const [storedUid, setStoredUid] = useState(localStorage.getItem("uid") || "");
     useEffect(() => {
-        if (uid) {
-            localStorage.setItem("uid", uid);
-            setStoredUid(uid);
-        }
-    }, [uid]);
-
-
-
-    /**
-     * After redirect, try to extract and save the response token if auth was successful
-     */
-    useEffect(() => {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const token = hashParams.get("access_token");
-
-        if (token && !getToken()) {
-            setToken(token, TIMEOUT);
-            window.location.hash = ""; // Clear hash
-        }
-    }, [setToken]);
-
-
-
-    /**
-     * If you already have an auth token, go to the target user
-     */
-    useEffect(() => {
-        if (getToken()) {
-
-            if (storedUid) {
-                window.localStorage.removeItem("uid");
-                nav(`/${storedUid}`);
-            } else {
-                // nav(`/${profile.id}`);  // Redirect to logged-in user's page after profile has loaded
-                nav(`/`);
+            if (profile?.display_name !== GUEST_PROFILE.display_name && profile) {
+                nav(`/user/${profile.id}`);
             }
-        }
-    }, [nav, getToken]);
-
-
-    async function loginAsGuest() {
-
-        try {
-            const op = get({
-                apiName: 'maggleAPI',
-                path: '/guest-token',
-            });
-
-            const { body } = await op.response;  // <-- This is correct
-            const token = await body.json();
-
-            setToken(token.access_token, TIMEOUT);
-            nav('/guest/');
-        } catch (err) {
-            console.error("Failed to load guest token", err);
-        }
-
-    }
-
-
-    /**
-     * Clear the token on logout
-     */
-    const logout = () => {
-        setToken("", 0);
-
-    }
-
-
-    return (<>
-        {!getToken() ?
-            <div id='LandingPage' style={{ justifyContent: "center", display: "flex", flexDirection: "column", height: "100%" }}>
-                <div>
-                    {/* <h1>Maggle!</h1> */}
-                    <span id='landingText'>
-                        <h1>How well do you know <span style={{ fontWeight: "bold", fontStyle: "italic", textDecoration: "underline" }}>your own</span> playlists?</h1>
-                        <p>Connect your Spotify account to <span style={{ fontWeight: "bold", fontStyle: "italic" }}>Maggle</span> and find out today!</p>
-                    </span>
-                    <div className="landingBtnContainer" >
-
-                        <a id="SpotifyLoginLink" className='selectable' href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Sign In With Spotify <span style={{ fontSize: "x-small", fontWeight: "bold" }}>(BETA)</span></a>
-
-                        <button id="GuestLoginLink" className='selectable' onClick={loginAsGuest}>Continue As Guest</button>
-                    </div>
+        }, [profile, nav]);
+    
+    return (
+        <div id='LandingPage' style={{ justifyContent: "center", display: "flex", flexDirection: "column", height: "100%" }}>
+            <div>
+                <span id='landingText'>
+                    <h1>How well do you know <span style={{ fontWeight: "bold", fontStyle: "italic", textDecoration: "underline" }}>your own</span> playlists?</h1>
+                    <p>Connect your Spotify account to <span style={{ fontWeight: "bold", fontStyle: "italic" }}>Maggle</span> and find out today!</p>
+                </span>
+                <div className="landingBtnContainer" >
+                    <button id="SpotifyLoginLink" onClick={() => login()}>Sign In With Spotify <span style={{ fontSize: "x-small", fontWeight: "bold" }}>(BETA)</span></button>
+                    <button id="GuestLoginLink" className='selectable' onClick={handleGuestLogin}>Continue As Guest</button>
                 </div>
-
-
             </div>
-            :
-            <>
-                <h1>This user has not received authorization to use this app. Please contact the app's creator for access.</h1>
-                <div>
-                    <button onClick={logout}>I understand</button>
-
-                </div>
-            </>
-        }
-    </>);
+        </div>
+    );
 }
 

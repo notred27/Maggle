@@ -21,7 +21,7 @@ const GUEST_PROFILE = {
 
 export default function useSpotifyProfile() {
   const [profile, setProfile] = useState(null);
-  const { _ , getToken } = useToken();
+  const { getToken } = useToken();
 
   const getProfile = useCallback(async () => {
     try {

@@ -26,7 +26,7 @@ export default function ProfileBadgeUI({ profile, children }) {
         <span className='dropdownMenu' ref={menuRef}>
             {profile &&
                 <span className='profileBadge noselect selectable' onClick={() => setDropped(!isDropped)}>
-                    <img src={profile.images[1].url || darrow} alt='spotifyProfileImg' />
+                    <img src={profile?.images[1]?.url || darrow} alt='spotifyProfileImg' />
                     <h3 id='profileBadgeName' >{profile.display_name}</h3>&nbsp;&nbsp;
 
                     {isDropped ? <img id="dropImg" src={uarrow} alt='show menu' /> : <img id="dropImg" src={darrow} alt='hide menu' />}

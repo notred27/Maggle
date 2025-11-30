@@ -9,7 +9,8 @@ export default function usePlaylists(profile) {
   const [userDict, setUserDict] = useState({});
 
   const [isLoaded, setIsLoaded] = useState(false);
-  const {_, getToken} = useToken();
+
+
 
   /**
    * Query Spotify's API for a list of different users
@@ -87,9 +88,9 @@ export default function usePlaylists(profile) {
 
     for (let i = 0; i < urls.length; i += batchSize) {
       const batch = urls.slice(i, i + batchSize).map(async url => {
-          const d = await fetchWithRateLimit(url, options);
-          return await d.json();
-        }
+        const d = await fetchWithRateLimit(url, options);
+        return await d.json();
+      }
       );
 
       // Fetch all requests in the current batch concurrently
@@ -103,136 +104,70 @@ export default function usePlaylists(profile) {
   }
 
 
-  /**
-   * Construct a dictionary of the user's playlists that contains info about their songs,
-   * and who added the songs to those playlists. Also populates userDict.
-   */
-  // const getPlaylists = useCallback(async (profile) => {
 
-  //   setIsLoaded(false);
-
-  //   const accessToken = getToken() //window.localStorage.getItem("token");
-
-  //   const songs = new Set();   // Ensure each song is only added as a search key once
-  //   const userSet = new Set(); // Ensure only one object is created for each unique Spotify profile
-  //   const playlistDict = {};   // Dictionary of playlists by their names
-
-  //   // const name = "maggieg0731"
-
-
-  //   const response = await fetchWithRateLimit(`https://api.spotify.com/v1/users/${profile}/playlists`, {
-  //     headers: {
-  //       Authorization: "Bearer " + accessToken,
-  //     },
-  //   });
-
-  //   const playlists = await response.json();
-
-
-  //   // Store playlist metadata first
-  //   playlists.items.forEach((p) => {
-  //     try {
-  //       playlistDict[p.name] = {
-  //         url: p.images[0]?.url || null,
-  //         songs: [],
-  //         playlistUrl: p.external_urls.spotify,
-  //       };
-  //     } catch {
-  //       playlistDict[p.name] = { url: null, songs: [] };
-  //     }
-  //   });
-
-  //   // Create batch requests for fetching playlist tracks
-  //   const playlistUrls = playlists.items.map(p => `https://api.spotify.com/v1/playlists/${p.id}/tracks`);
-  //   const playlistTracksData = await fetchBatchWithRateLimit(playlistUrls, { headers: { Authorization: `Bearer ${accessToken}` } });
-
-
-  //   // Process fetched playlist track data
-  //   playlistTracksData.forEach((playlistData, index) => {
-  //     playlistData.items.forEach((s) => {
-  //       try {
-  //         const p = playlists.items[index];
-
-  //         const artists = s.track.artists.map((x) => x.name).join(", ");
-  //         playlistDict[p.name].songs.push({
-  //           name: `${s.track.name} - ${artists}`,
-  //           imgUrl: s.track.album.images[1]?.url || null,
-  //           addedBy: s.added_by.id,
-  //         });
-  //         songs.add(`${s.track.name} - ${artists}`);
-  //         userSet.add(s.added_by.id);
-  //       } catch (error) {
-  //         console.error("Error processing track:", s, error);
-  //       }
-  //     });
-  //   });
-
-
-  //   // Fetch the details of all users who have added a song to your playlists
-  //   const userDict = await getUserInfo(userSet, accessToken);
-
-  //   setUserDict(userDict)
-  //   setSongDict(playlistDict);
-  //   setSearchItems(Array.from(songs));
-  //   setIsLoaded(true);
-
-  //   // console.log(playlistDict)
-  // }, [profile])
-  
-  const getPlaylists = useCallback(async (profile) => {
+  const getPlaylists = useCallback(async (profile_id, accessToken) => {
     setIsLoaded(false);
 
-    const accessToken = getToken();
+    // const accessToken = getToken();
     const songs = new Set();
     const userSet = new Set();
     const playlistDict = {};
 
-    let nextUrl = `https://api.spotify.com/v1/users/${profile}/playlists`;
+    let nextUrl = `https://api.spotify.com/v1/users/${profile_id}/playlists`;
     const playlists = [];
 
     // Fetch all playlists with pagination
     while (nextUrl) {
-        const response = await fetchWithRateLimit(nextUrl, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        const data = await response.json();
+      const response = await fetchWithRateLimit(nextUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      const data = await response.json();
+
+      if (!data.items) {
+        console.warn("No playlists returned for pass", data);
+
+      }
+      else {
         playlists.push(...data.items);
-        nextUrl = data.next;
+
+      }
+
+      nextUrl = data.next;
     }
 
     // Store playlist metadata first
     playlists.forEach((p) => {
-        playlistDict[p.name] = {
-            url: p.images[0]?.url || null,
-            songs: [],
-            playlistUrl: p.external_urls.spotify,
-        };
+      playlistDict[p.name] = {
+        url: p.images[0]?.url || null,
+        songs: [],
+        playlistUrl: p.external_urls.spotify,
+      };
     });
 
     // Fetch all playlist tracks with pagination
     for (const p of playlists) {
-        let trackUrl = `https://api.spotify.com/v1/playlists/${p.id}/tracks`;
-        while (trackUrl) {
-            const trackResponse = await fetchWithRateLimit(trackUrl, {
-                headers: { Authorization: `Bearer ${accessToken}` }
+      let trackUrl = `https://api.spotify.com/v1/playlists/${p.id}/tracks`;
+      while (trackUrl) {
+        const trackResponse = await fetchWithRateLimit(trackUrl, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const trackData = await trackResponse.json();
+        trackData.items.forEach((s) => {
+          try {
+            const artists = s.track.artists.map((x) => x.name).join(", ");
+            playlistDict[p.name].songs.push({
+              name: `${s.track.name} - ${artists}`,
+              imgUrl: s.track.album.images[1]?.url || null,
+              addedBy: s.added_by.id,
             });
-            const trackData = await trackResponse.json();
-            trackData.items.forEach((s) => {
-                try {
-                    const artists = s.track.artists.map((x) => x.name).join(", ");
-                    playlistDict[p.name].songs.push({
-                        name: `${s.track.name} - ${artists}`,
-                        imgUrl: s.track.album.images[1]?.url || null,
-                        addedBy: s.added_by.id,
-                    });
-                    songs.add(`${s.track.name} - ${artists}`);
-                    userSet.add(s.added_by.id);
-                } catch (error) {
-                    console.error("Error processing track:", s, error);
-                }
-            });
-            trackUrl = trackData.next;
-        }
+            songs.add(`${s.track.name} - ${artists}`);
+            userSet.add(s.added_by.id);
+          } catch (error) {
+            console.error("Error processing track:", s, error);
+          }
+        });
+        trackUrl = trackData.next;
+      }
     }
 
     // Fetch user details
@@ -242,7 +177,7 @@ export default function usePlaylists(profile) {
     setSongDict(playlistDict);
     setSearchItems(Array.from(songs));
     setIsLoaded(true);
-}, [profile]);
+  }, [profile]);
 
-  return { songDict, searchItems, userDict, getPlaylists, isLoaded};
+  return { songDict, searchItems, userDict, getPlaylists, isLoaded };
 }

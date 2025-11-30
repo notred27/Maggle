@@ -1,78 +1,50 @@
+// src/AppRouter.jsx
 import Main from "./Main";
 import Login from "./Login";
 import { Routes, Route } from "react-router-dom";
 import Guest from "./Guest";
 import AppHeader from "./assets/AppHeader";
 
-import useSpotifyProfile from "./hooks/useSpotifyProfile.js";
-
+import { useSession } from "./contexts/SessionContext"; // <-- use this
 import { useNavigate } from "react-router-dom";
 
-import { useEffect } from "react";
-
-import useToken from "./hooks/useToken";
-
-
 export default function AppRouter() {
-  // Load user's preferred theme if one exists
-  const savedTheme = window.localStorage.getItem('theme');
+  // theme code unchanged
+  const savedTheme = window.localStorage.getItem("theme");
   if (savedTheme) {
-    document.querySelector('body').setAttribute('data-theme', savedTheme);
+    document.querySelector("body").setAttribute("data-theme", savedTheme);
   }
 
   const nav = useNavigate();
 
-
-  const { profile, getProfile, setProfile } = useSpotifyProfile();
-  const { setToken } = useToken();
-
-  // const location = useLocation();
-  // const hideHeader = location.pathname.startsWith("/login");
-
-  // update useSpotifyProfile when access token is granted / page navigation changes
-  useEffect(() => {
-    getProfile();
-  }, [nav, getProfile]);
-
-  function logOut() {
-    setToken("", 0);
-    setProfile(null);
-    nav("/login");
-  }
+  const { profile, login, logout, accessToken } = useSession();
 
   return (
     <div className="App">
-      <AppHeader profile={profile} logOut={logOut} nav={nav}></AppHeader>
+      <AppHeader profile={profile} logOut={logout} nav={nav} />
 
       <main style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", minHeight: "90vh" }}>
-
-
         <Routes>
           <Route path="/:uid?" element={<Main />} />
+          <Route path="/user/:uid?" element={<Main />} />
+
           <Route path="/guest/:uid?" element={<Guest />} />
-
-          <Route path="/login/:uid?" element={<Login />} />
+          <Route path="/login/:uid?" element={<Login  nav = {nav} />} />
           <Route path="/about" element={<Login />} />
-
         </Routes>
       </main>
 
-      <footer style={{ flex: "0 1 40px", display: "flex", flexDirection: "column", textAlign: "left", padding: "40px", fontWeight: "bold", gap:"10px"}}>
-        {/* Made with React. */}
-
+      <footer style={{ flex: "0 1 40px", display: "flex", flexDirection: "column", textAlign: "left", padding: "40px", fontWeight: "bold", gap: "10px" }}>
         <a href="/about" style={{ color: "white", textDecoration: "none" }}>ABOUT</a>
 
-        {profile === null ?
+        {profile === null ? (
           <a href="/login" style={{ color: "white", textDecoration: "none" }}>LOGIN</a>
-          :
-          <a onClick={() => logOut()} href="/login" style={{ color: "white", textDecoration: "none" }}>LOGOUT</a>
-        }
+        ) : (
+          <a onClick={logout} href="/login" style={{ color: "white", textDecoration: "none" }}>LOGOUT</a>
+        )}
 
         <a href="https://ko-fi.com/notred27" style={{ color: "white", textDecoration: "none" }}>SUPPORT US</a>
-
-
       </footer>
-
     </div>
-  )
+  );
 }

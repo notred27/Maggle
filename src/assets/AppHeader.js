@@ -9,13 +9,7 @@ export default function AppHeader({ profile, logOut, nav }) {
 
     return (
         <header className='appHeader'>
-            {/* <span className='streakText'>
-                  Current Streak: {gameState.score}
-                  <br />
-                  Best Streak: {gameState.bestScore}
-                </span> */}
-
-            {/* <SettingBadgeUI></SettingBadgeUI> */}
+           
 
 
             <h1 className='noselect' style={{ marginLeft: "10px" }}>Maggle!</h1>
