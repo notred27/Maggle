@@ -1,3 +1,8 @@
+# Maggle
+#### A Heardle-like website based on your Spotify playlists! 
+
+![Landing Page](README/landing.png)
+
 ### Known Bugs
 - [ ] Error playing first song after application loads
 - [x] When switching themes, the song progress bar's max length may change
