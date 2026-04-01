@@ -15,11 +15,11 @@ import { useEffect, useRef, useState, useCallback } from "react";
  * Important: mount this hook only once (usually inside a SessionProvider).
  */
 
-const TOKEN_KEY = "token"; // JSON { value, expiry }
+const TOKEN_KEY = "token"; 
 const REFRESH_KEY = "refresh_token";
 const VERIFIER_KEY = "code_verifier";
 
-const redirectUri = "http://127.0.0.1:3000/"; // adapt to your app
+const redirectUri = process.env.REACT_APP_REDIRECT_URI;
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const SCOPE = "user-read-private user-read-email";
 
