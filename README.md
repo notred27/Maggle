@@ -19,8 +19,45 @@
 
 ## Features
 
-<img src = "README/game.png" style="max-height:400px;" />
-<img src = "README/gameover.png" style="max-height:400px;" />
+Maggle is a web app where users guess songs from their Spotify playlists by listening to progressively longer segments of a track. Inspired by the late website [Heardle](https://en.wikipedia.org/wiki/Heardle), Maggle provides an enhanced experience by directly integrating the users’ public Spotify playlists as the target songs.
+
+Additional features include:
+
+- Direct authentication with Spotify (closed beta)
+- A public guest mode that allows you to play using any Spotify user's public playlists
+- The ability to choose between all public playlists or a specific playlist as the song source
+- Progressive audio clips paired with a search bar containing all of a user's publicly saved songs
+- Tracking of current and longest streaks for local users (via cookies)
+- Five color themes for a customizable experience
+- Direct links to the playlist a chosen song is from, and the user that added it to the playlist
+
+
+<table style="border:0px;">
+  <tr>
+    <td>
+
+<img src="./README/game.png" style="max-height:260px;" />
+          
+_Main view of the app where user can play clips of the target song, and guess._
+          
+</td>
+
+<td>
+
+<img src="./README/gameover.png" style="max-height:260px;" />
+            
+_End screen where the target song is revealed._
+          
+</td>
+          
+  </tr>
+  
+</table>
+
+
+
+>[!NOTE]
+> A stand-alone build of this game made using Python and PyGame can be found on the branch `main` of this repository. 
 
 ## How It Works
 
