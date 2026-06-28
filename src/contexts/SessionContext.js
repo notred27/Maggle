@@ -11,7 +11,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import useToken from "../hooks/useToken";
 
-import { get } from 'aws-amplify/api';
+// import { get } from 'aws-amplify/api';
 
 export const GUEST_PROFILE = {
     display_name: "Guest",
@@ -147,28 +147,30 @@ export function SessionProvider({ children }) {
   }, [clearToken, navigate]);
 
 
-  const handleGuestLogin = useCallback(async () => {
+const handleGuestLogin = useCallback(async () => {
+  if (isLoading) return;
+  setIsLoading(true);
   try {
     clearToken();
     setProfile(null);
 
-    // Optionally fetch a guest token from your API
-    const op = get({ apiName: 'maggleAPI', path: '/guest-token' });
-    const { body } = await op.response;
-    const tokenData = await body.json();
+    const res = await fetch("https://ik7oph0pw2.execute-api.us-east-2.amazonaws.com/dev/guest-token");
+    
+    if (!res.ok) throw new Error(`Failed to fetch guest token: ${res.status}`);
+    
+    const tokenData = await res.json();
 
-    // Set session state as guest
     setProfile(GUEST_PROFILE);
     const ttlMs = (tokenData.expires_in || 3600) * 1000;
-    setToken(tokenData.access_token, ttlMs)
+    setToken(tokenData.access_token, ttlMs);
 
-    // Navigate to guest route
     navigate("/guest/", { replace: true });
   } catch (err) {
     console.error("Failed to login as guest", err);
+  } finally {
+    setIsLoading(false);
   }
-}, []);
-
+}, [clearToken, setToken, navigate, isLoading]);
 
 
   const value = useMemo(
