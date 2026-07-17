@@ -3,7 +3,7 @@
   "aws_cloud_logic_custom": [
     {
       "name": "maggleAPI",
-      "endpoint": "https://k7e39oyqbh.execute-api.us-east-2.amazonaws.com/dev",
+      "endpoint": "https://ik7oph0pw2.execute-api.us-east-2.amazonaws.com/dev",
       "region": "us-east-2"
     }
   ]

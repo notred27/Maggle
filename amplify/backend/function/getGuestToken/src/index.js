@@ -35,11 +35,23 @@ exports.handler = async (event) => {
         if (res.statusCode === 200) {
           resolve({
             statusCode: 200,
-            body: JSON.stringify({ access_token: parsedData.access_token }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type',
+            },
+            body: JSON.stringify({ access_token: parsedData.access_token, expires_in: parsedData.expires_in }),
           });
         } else {
-          reject({
+          resolve({
             statusCode: res.statusCode,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type',
+            },
             body: JSON.stringify({ error: parsedData.error, description: parsedData.error_description }),
           });
         }
@@ -47,8 +59,14 @@ exports.handler = async (event) => {
     });
 
     req.on('error', (error) => {
-      reject({
+      resolve({
         statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
         body: JSON.stringify({ error: 'Internal Server Error', message: error.message }),
       });
     });
