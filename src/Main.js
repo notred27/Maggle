@@ -132,12 +132,14 @@ export default function Main() {
                         <div style={{ maxWidth: "600px", width: "90vw", display: "flex", flexDirection: "column", justifyContent: "center", position: "relative" }}>
                             <ProgressBar state={gameState} >
 
-                                <PlayButton
-                                    audioUrl={gameState.audioUrl}
-                                    volume={volume}
-                                    maxPlaybackLength={gameState.maxPlaybackLength}
-                                    inputVal={setPbarValue}
-                                />
+                                {gameState.audioUrl &&
+                                    <PlayButton
+                                        audioUrl={gameState.audioUrl}
+                                        volume={volume}
+                                        maxPlaybackLength={gameState.maxPlaybackLength}
+                                        inputVal={setPbarValue}
+                                    />
+                                }
 
                             </ProgressBar>
 
